@@ -71,6 +71,8 @@ class Deck extends HTMLElement {
 		this._image = value;
 		this._imageElements.forEach((img, index) => {
 			img.src =  URL.Card(value[index] || "");
+			img.style.zIndex = index - value.length;
+			img.style.left = `${(index) * 10}px`;
 			img.style.display = value[index] ? "initial" : "none";
 		});
 	}
@@ -85,24 +87,12 @@ class Deck extends HTMLElement {
 }
 
 Deck.HTML = `
-<img id="third" />
-<img id="second" />
-<img id="first" />
+<img />
+<img />
+<img />
 `;
 
 Deck.CSS = `
-img#first {
-	z-index: 0;
-	left: 0px;
-}
-img#second {
-	z-index: -1;
-	left: -10px;
-}
-img#third {
-	z-index: -2;
-	left: -20px;
-}
 img {
     position: absolute;
 	width: 100px;

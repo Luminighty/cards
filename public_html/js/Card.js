@@ -73,6 +73,17 @@ class Card extends HTMLElement {
 				break;
 			}
 		}
+		if (this.grabbed())
+		for(const id in Card.Instances) {
+			if (id == this.id)
+				continue;
+			const card = Card.Instances[id];
+			if (card.clientRects.some((rect) => Rect.contains(rect, mouse))) {
+				DB.Deck.newDeck(card.id, this.id);
+				console.log("New deck");
+				break;
+			}
+		}
 		this.drop(e);
 	}
 
@@ -91,6 +102,10 @@ class Card extends HTMLElement {
 	}
 
 	get image() { return this._image; }
+
+	get clientRects() {
+		return [this._imageElement.getBoundingClientRect()];
+	}
 }
 
 Card.HTML = `

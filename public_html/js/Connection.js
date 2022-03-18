@@ -13,6 +13,11 @@ socket.on("delete card", (id) => {
 
 socket.on("delete deck", (id) => {
 	Deck.Instances[id].remove();
+	for(const id in Card.Instances) {
+		const card = Card.Instances[id];
+		if (card.grabbed())
+			card.setZindex();
+	}
 	delete Deck.Instances[id];
 });
 

@@ -1,5 +1,6 @@
 const { Socket } = require("socket.io");
 const Game = require("./Game");
+const Deck = require("./objects/Deck");
 const Player = require("./Player");
 
 
@@ -50,6 +51,18 @@ function Connection(socket) {
 			game.broadcast("delete card", card.id);
 			game.syncDeck(deck);
 		});
+	});
+
+	socket.on("deck create", (cardIds, callback) => {
+		const cards = cardIds.map((id) => game.cards[id]);
+		const deck = new Deck({
+			cards,
+			position: cards[0].position,
+		});
+		game.decks[deck.id] = deck;
+		deck.updateImage(game.cards);
+		game.syncDeck(deck);
+		cards.forEach((card) => game.broadcast("delete card", card.id));
 	});
 
 	socket.on("deck draw", (id, drag, callback) => {

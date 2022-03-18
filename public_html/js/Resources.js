@@ -40,5 +40,8 @@ const DB = {
 		addCard: (id, cardId, callback) => {
 			socket.emit("deck addCard", id, cardId, callback);
 		},
+		newDeck: (...cardIds) => {
+			socket.emit("deck create", cardIds);
+		},
 	}
 }
