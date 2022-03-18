@@ -1,5 +1,8 @@
 const { Socket } = require("socket.io");
+const { idGroup } = require("../utils/id");
 const Game = require("./Game");
+
+const playerId = idGroup();
 
 class Player {
 	constructor(socket) {
@@ -7,6 +10,7 @@ class Player {
 		this.socket = socket;
 		/** @type {Game} */
 		this.game = null;
+		this.id = playerId();
 	}
 
 	join(game) {
@@ -23,11 +27,17 @@ class Player {
 	get gamestate() {
 		if (!this.game)
 			return null;
-		const cards = Object.keys(this.game.cards).map((id) => this.game.cards[id].simplified(this));
 		return {
-			cards: cards,
+			cards: SimplifiedType(this.game.cards, this),
+			decks: SimplifiedType(this.game.decks, this),
 		};
 	}
 }
+
+
+const SimplifiedType = (map, player) =>
+	Object.keys(map)
+		.map((id) => map[id].simplified(player))
+		.filter((value) => value != null);
 
 module.exports = Player;

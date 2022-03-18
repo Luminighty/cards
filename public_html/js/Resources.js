@@ -1,6 +1,6 @@
 
 /**
- * @typedef {CardDataType}
+ * @typedef {Object} CardDataType
  * @property {number} id
  * @property {string} front
  * @property {string} back
@@ -23,5 +23,22 @@ const DB = {
 		move: (id, position, callback) => {
 			socket.emit("card move", id, position, callback);
 		}
+	},
+	Deck: {
+		get: (id, callback) => {
+			socket.emit("get deck", id, callback);
+		},
+		move: (id, position, callback) => {
+			socket.emit("deck move", id, position, callback);
+		},
+		draw: (id, drag, callback) => {
+			socket.emit("deck draw", id, drag, callback);
+		},
+		shuffle: (id, callback) => {
+			socket.emit("deck shuffle", id, callback);
+		},
+		addCard: (id, cardId, callback) => {
+			socket.emit("deck addCard", id, cardId, callback);
+		},
 	}
 }
