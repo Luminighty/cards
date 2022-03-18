@@ -1,12 +1,12 @@
 const {id} = require("../../utils/id");
 
 class Card {
-	constructor(front, back, flipped) {
+	constructor(data) {
 		this.id = id();
-		this.front = front;
-		this.back = back;
-		this.flipped = flipped || false;
-		this.position = Card.Position(this);
+		this.front = data.front;
+		this.back = data.back;
+		this.flipped = data.flipped || false;
+		this.position = data.position || Card.Position(this);
 		this.deck = null;
 		this.playerHand = null;
 	}

@@ -1,4 +1,4 @@
-const { loadCards } = require("../ResourceLoader");
+const { loadCards } = require("../resources/GameLoader");
 const Card = require("./objects/Card");
 const Deck = require("./objects/Deck");
 const Player = require("./Player");
@@ -8,15 +8,35 @@ class Game {
 		/** @type {Player[]} */
 		this.players = [];
 		/** @type {Object<number, Card>} */
-		this.cards = loadCards() || {};
+		this.cards = {};
 		/** @type {Object<number, Deck>} */
 		this.decks = {};
-		const deck = this.add(new Deck({
-			cards: Object.values(this.cards),
-			shuffle: false,
-			position: {x: 300, y: 300},
-		}));
-		deck.updateImage(this.cards);
+	}
+
+	/** @param {import("../resources/GameLoader").GameData} gameData */
+	setGame(gameData) {
+		if (!gameData)
+			return;
+		this.cards = {};
+		this.decks = {};
+
+		for (const data of gameData.cards) {
+			const card = new Card(data);
+			this.cards[card.id] = card;
+		}
+
+		for (const data of gameData.decks) {
+			data.cards = data.cards.map((v) => new Card(v));
+			data.cards.forEach((card) => this.cards[card.id] = card);
+			const deck = new Deck(data);
+			this.decks[deck.id] = deck;
+			deck.updateImage(this.cards);
+		}
+
+		for (const player of this.players) {
+			player.clear();
+			player.emit("set state", player.gamestate);
+		}
 	}
 
 	/**

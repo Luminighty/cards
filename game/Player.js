@@ -33,6 +33,14 @@ class Player {
 			decks: SimplifiedType(this.game.decks, this),
 		};
 	}
+
+	clear() {
+		this.hand = [];
+	}
+
+	emit(...args) {
+		this.socket.emit(...args);
+	}
 }
 
 

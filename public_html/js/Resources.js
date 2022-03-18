@@ -9,7 +9,7 @@
 
 
 const URL = {
-	Card: (value) => value ? `res/cards/${value}.png` : "",
+	Card: (value) => value ? `res/${value}` : "",
 }
 
 const DB = {
