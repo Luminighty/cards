@@ -25,11 +25,20 @@ class Card extends HTMLElement {
 
 	/** @param {KeyboardEvent} e */
 	keyup(e) {
-		if (e.key == "f" && this.hovering) {
-			DB.Card.flip(this.id, (res) => {
-				this.set(res);
-			});
-		}
+		if (e.key == "f" && this.hovering)
+			this.flip();
+		
+	}
+
+	flip() {
+		DB.Card.flip(this.id, (res) => {
+			this.set(res);
+		});
+	}
+
+	take(position) {
+		Hand.add(this, position);
+		DB.Hand.add(this.id);
 	}
 
 	setZindex() {
@@ -56,6 +65,8 @@ class Card extends HTMLElement {
 
 	/** @param {MouseEvent} e */
 	mousedown(e) {
+		if (e.button == 2)
+			return;
 		e.preventDefault();
 		this.drag(e);
 		this.setZindex();
@@ -64,27 +75,40 @@ class Card extends HTMLElement {
 	/** @param {MouseEvent} e */
 	mouseup(e) {
 		const mouse = Mouse.fromEvent(e);
-		if (this.grabbed())
-		for(const id in Deck.Instances) {
-			const deck = Deck.Instances[id];
-			if (deck.clientRects.some((rect) => Rect.contains(rect, mouse))) {
-				DB.Deck.addCard(deck.id, this.id);
-				console.log("Add card");
-				break;
+		if (this.grabbed()) {
+			const inHand = Hand.contains(this);
+			if (Hand.isHovering(mouse)) {
+				if (!inHand) {
+					this.take();
+				} else {
+					Hand.drop(this);
+				}
+			} else {
+				if (inHand) {
+					Hand.remove(this);
+					DB.Hand.remove(this.id);
+				}
+				const hoverDeck = this.isOverOther(Deck.Instances, mouse);
+				if (hoverDeck)
+					DB.Deck.addCard(hoverDeck.id, this.id);
+				const hoverCard = this.isOverOther(Card.Instances, mouse);
+				if (hoverCard)
+					DB.Deck.newDeck(hoverCard.id, this.id);
 			}
-		}
-		if (this.grabbed())
-		for(const id in Card.Instances) {
-			if (id == this.id)
-				continue;
-			const card = Card.Instances[id];
-			if (card.clientRects.some((rect) => Rect.contains(rect, mouse))) {
-				DB.Deck.newDeck(card.id, this.id);
-				console.log("New deck");
-				break;
-			}
+			
 		}
 		this.drop(e);
+	}
+
+	isOverOther(instances, mouse) {
+		for(const id in instances) {
+			if (id == this.id)
+				continue;
+			const other = instances[id];
+			if (other.clientRects.some((rect) => Rect.contains(rect, mouse)))
+				return other;
+		}
+		return null;
 	}
 
 	/** @param {MouseEvent} e */
@@ -94,6 +118,12 @@ class Card extends HTMLElement {
 		e.preventDefault();
 
 		DB.Card.move(this.id, this.position);
+	}
+
+	/** @param {MouseEvent} e */
+	contextmenu(e) {
+		e.preventDefault();
+		Card.ContextMenu.open(e, this);
 	}
 
 	set image(value) { 
@@ -120,6 +150,14 @@ img {
 
 /** @type {Object<number, Card>} */
 Card.Instances = {};
+
+Card.ContextMenu = new ContextMenu()
+	.button("Flip", (context) => context.flip())
+	.button("Take", (context) => context.take())
+	.button("Cute dimi", (context, e) => console.log("fake"))
+	.button("Stupid lumi", (context, e) => console.log("yeah"))
+;
+
 customElements.define('card-element', Card);
 
 Mixins.MouseEvents(Card.Instances);

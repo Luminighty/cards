@@ -43,5 +43,13 @@ const DB = {
 		newDeck: (...cardIds) => {
 			socket.emit("deck create", cardIds);
 		},
+	},
+	Hand: {
+		add: (id, callback) => {
+			socket.emit("hand add", id, callback);
+		},
+		remove: (id, callback) => {
+			socket.emit("hand remove", id, callback);
+		},
 	}
 }

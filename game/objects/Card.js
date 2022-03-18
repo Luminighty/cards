@@ -8,6 +8,7 @@ class Card {
 		this.flipped = flipped || false;
 		this.position = Card.Position(this);
 		this.deck = null;
+		this.playerHand = null;
 	}
 
 	get image() {
@@ -17,10 +18,12 @@ class Card {
 	simplified(player) {
 		if (this.deck != null)
 			return null;
+		if (this.playerHand != null && this.playerHand != player.id)
+			return null;
 		return {
 			id: this.id,
 			image: this.image,
-			position: this.position,
+			position: this.playerHand == null ? this.position : null,
 		};
 	}
 }

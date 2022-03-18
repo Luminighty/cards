@@ -1,31 +1,15 @@
 const { Socket } = require("socket.io");
-const Game = require("./Game");
-const Deck = require("./objects/Deck");
-const Player = require("./Player");
+const Game = require("../game/Game");
+const Deck = require("../game/objects/Deck");
+const Player = require("../game/Player");
 
 
 /**
  * @param {Socket} socket 
+ * @param {Player} player
+ * @param {Game} game
  */
-function Connection(socket) {
-	const player = new Player(socket);
-	player.join(Game.Instance);
-	const game = player.game;
-
-	socket.on('disconnect', () => {
-		player.leave();
-	});
-
-
-	socket.emit("set state", player.gamestate);
-
-	socket.on("card flip", (id, callback) => {
-		CardAction(game, player, callback, id, (card) => card.flipped = !card.flipped);
-	});
-
-	socket.on("card move", (id, position, callback) => {
-		CardAction(game, player, callback, id, (card) => card.position = position);
-	});
+function DeckConnection(socket, player, game) {
 
 	socket.on("deck move", (id, position, callback) => {
 		DeckAction(game, player, callback, id, (deck) => deck.position = position);
@@ -92,20 +76,6 @@ function Connection(socket) {
 	});
 }
 
-
-function CardAction(game, player, callback, cardId, action) {
-	const card = game.cards[cardId];
-	if (!card) {
-		console.error(`Card not found: ${cardId}`);
-		return;
-	}
-	action(card);
-	if (callback)
-		callback(card.simplified(player));
-	game.syncCard(card, player);
-}
-
-
 function DeckAction(game, player, callback, deckId, action) {
 	const deck = game.decks[deckId];
 	if (!deck) {
@@ -119,6 +89,4 @@ function DeckAction(game, player, callback, deckId, action) {
 	game.syncDeck(deck, player);
 }
 
-
-
-module.exports = Connection;
+module.exports = DeckConnection;

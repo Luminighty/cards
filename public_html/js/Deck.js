@@ -24,11 +24,29 @@ class Deck extends HTMLElement {
 	/** @param {KeyboardEvent} e */
 	keyup(e) {
 		if (e.key == "s" && this.hovering)
-			DB.Deck.shuffle(this.id);
-		
+			this.shuffle();
 	}
+	
+	shuffle() {
+		DB.Deck.shuffle(this.id);
+	}
+
+	draw() {
+		
+		DB.Deck.draw(this.id, this.dragStart, (card, deck, drag) => {
+			const element = createCard(card);
+			element.take(Hand.items.length);
+			element.setDrag(drag);
+			element.setZindex();
+			this.set(deck);
+		});
+	}
+
+
 	/** @param {MouseEvent} e */
 	mousedown(e) {
+		if (e.button == 2)
+			return;
 		e.preventDefault();
 		this.dragStart = Mouse.fromEvent(e);
 		setTimeout(() => {
@@ -67,6 +85,12 @@ class Deck extends HTMLElement {
 		DB.Deck.move(this.id, this.position);
 	}
 
+	/** @param {MouseEvent} e */
+	contextmenu(e) {
+		e.preventDefault();
+		Deck.ContextMenu.open(e, this);
+	}
+
 	set image(value) {
 		this._image = value;
 		this._imageElements.forEach((img, index) => {
@@ -103,6 +127,12 @@ img {
 
 /** @type {Object<number, Deck>} */
 Deck.Instances = {};
+
+Deck.ContextMenu = new ContextMenu()
+	.button("Draw", (context, e) => context.draw())
+	.button("Shuffle", (context) => context.shuffle())
+;
+
 customElements.define('deck-element', Deck);
 
 Mixins.MouseEvents(Deck.Instances);

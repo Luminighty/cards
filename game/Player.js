@@ -11,6 +11,7 @@ class Player {
 		/** @type {Game} */
 		this.game = null;
 		this.id = playerId();
+		this.hand = [];
 	}
 
 	join(game) {

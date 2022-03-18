@@ -42,16 +42,20 @@ class Game {
 	}
 
 	sync(type, data, sender) {
-		for (const player of this.players)
-			if (sender != player)
-				player.socket.emit(`set ${type}`, data.simplified(player));
+		for (const player of this.players) {
+			if (sender != player) {
+				const sendData = data.simplified != null ? data.simplified(player) : data;
+				if (sendData != null)
+					player.socket.emit(type, sendData);
+			}
+		}
 	}
 
 	syncCard(card, sender) {
-		this.sync("card", card, sender);
+		this.sync("set card", card, sender);
 	}
 	syncDeck(deck, sender) {
-		this.sync("deck", deck, sender);
+		this.sync("set deck", deck, sender);
 	}
 
 	// Resets the state for everyone

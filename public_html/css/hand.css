@@ -1,0 +1,7 @@
+#Hand {
+	background-color: rgba(0, 0, 0, 0.25);
+	position: fixed;
+	bottom: 0px;
+	left: 50%;
+	transform: translateX(-50%);
+}

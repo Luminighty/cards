@@ -4,8 +4,8 @@ const app = express();
 const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
+const Connection = require("./controller/Connection");
 const io = new Server(server);
-const Connection = require("./game/Connection");
 
 const PORT = process.env.PORT || 5000;
 

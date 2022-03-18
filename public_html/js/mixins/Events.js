@@ -1,5 +1,6 @@
 Mixins.MouseEvents = (objects) => {
 	mixinEvent("mousedown", objects);
+	mixinEvent("contextmenu", objects);
 	mixinEvent("mouseup", objects, false);
 	mixinEvent("mousemove", objects, false);
 };
@@ -14,7 +15,7 @@ Mixins.KeyboardEvents = (objects) => {
 	mixinEvent("keyup", objects, false);
 };
 
-function mixinEvent(name, objects, checkTarget = true, defaultImpl) {
+function mixinEvent(name, objects, checkTarget = true, defaultImpl = null) {
 	window.addEventListener(name, (e) => {
 		for (const object of Object.values(objects)) {
 			const func = (object[name] || defaultImpl);
