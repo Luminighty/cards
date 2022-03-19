@@ -46,3 +46,5 @@ window.addEventListener("mousemove", (e) => {
 	Mouse.x = e.clientX;
 	Mouse.y = e.clientY;
 });
+
+let sleep = ms => new Promise(resolve => setTimeout(resolve, ms));

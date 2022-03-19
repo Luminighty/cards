@@ -13,10 +13,6 @@ class Card extends HTMLElement {
 		Mixins.HoverEvents(this);
 	}
 
-	remove() {
-		super.remove();
-	}
-
 	set(card) {
 		this.id = (card.id != null) ? card.id : this.id;
 		this.image = card.image || this.image;
@@ -27,7 +23,15 @@ class Card extends HTMLElement {
 	keyup(e) {
 		if (e.key == "f" && this.hovering)
 			this.flip();
-		
+	}
+
+	/** @param {KeyboardEvent} e */
+	keydown(e) {
+		if (!this.hovering)
+			return;
+		if (e.key == "Tab") {
+			e.preventDefault();
+		}
 	}
 
 	flip() {
@@ -42,21 +46,19 @@ class Card extends HTMLElement {
 	}
 
 	setZindex() {
-		const length = Object.keys(Card.Instances).length;
-		const lastzIndex = this.zIndex;
-		if (parseInt(this.style.zIndex) != length) {
-			for (const key in Card.Instances) {
-				const card = Card.Instances[key];
-				const zIndex = card.zIndex;
-				if (zIndex > lastzIndex)
-					card.zIndex = zIndex - 1;
-			}
-			this.zIndex = length;
-		}
+		if (this.zIndex != null && this.zIndex == Card.ZIndexStack.length - 1)
+			return;
+		const index = Card.ZIndexStack.findIndex((val) => val.id == this.id);
+		if (index != -1)
+			Card.ZIndexStack.splice(index, 1);
+		Card.ZIndexStack.push(this);
+		Card.ZIndexStack.forEach((card, index) => {
+			card.zIndex = index;
+		});
 	}
 
 	get zIndex() {
-		return parseInt(this.style.zIndex || 0);
+		return parseInt(this.style.zIndex);
 	}
 
 	set zIndex(value) {
@@ -150,6 +152,7 @@ img {
 
 /** @type {Object<number, Card>} */
 Card.Instances = {};
+Card.ZIndexStack = [];
 
 Card.ContextMenu = new ContextMenu()
 	.button("Flip", (context) => context.flip())

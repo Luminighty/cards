@@ -21,10 +21,10 @@ function CardAction(game, player, callback, cardId, action) {
 		console.error(`Card not found: ${cardId}`);
 		return;
 	}
-	action(card);
+	const extra = action(card);
 	if (callback)
 		callback(card.simplified(player));
-	game.syncCard(card, player);
+	game.syncCard(card, player, extra);
 }
 
 module.exports = CardConnection;

@@ -4,15 +4,26 @@ socket.on("set state", (data) => {
 	console.log(data);
 	setCards(data.cards);
 	setDecks(data.decks);
+	Hand.items = [];
 });
 
 socket.on("delete card", (id) => {
-	Card.Instances[id].remove();
+	const card = Card.Instances[id];
+	if (!card) {
+		console.error(`Card not found with ${id}`);
+		return;
+	}
+	card.remove();
 	delete Card.Instances[id];
 });
 
 socket.on("delete deck", (id) => {
-	Deck.Instances[id].remove();
+	const deck = Deck.Instances[id];
+	if (!deck) {
+		console.error(`Deck not found with ${id}`);
+		return;
+	}
+	deck.remove();
 	for(const id in Card.Instances) {
 		const card = Card.Instances[id];
 		if (card.grabbed())

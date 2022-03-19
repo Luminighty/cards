@@ -37,6 +37,7 @@ class Game {
 			player.clear();
 			player.emit("set state", player.gamestate);
 		}
+		return this;
 	}
 
 	/**
@@ -61,21 +62,23 @@ class Game {
 		this.players.splice(index, 1);
 	}
 
-	sync(type, data, sender) {
+	sync(type, data, sender, extra) {
 		for (const player of this.players) {
 			if (sender != player) {
 				const sendData = data.simplified != null ? data.simplified(player) : data;
+				if (extra)
+					Object.assign(sendData, extra);
 				if (sendData != null)
 					player.socket.emit(type, sendData);
 			}
 		}
 	}
 
-	syncCard(card, sender) {
-		this.sync("set card", card, sender);
+	syncCard(card, sender, extra) {
+		this.sync("set card", card, sender, extra);
 	}
-	syncDeck(deck, sender) {
-		this.sync("set deck", deck, sender);
+	syncDeck(deck, sender, extra) {
+		this.sync("set deck", deck, sender, extra);
 	}
 
 	// Resets the state for everyone

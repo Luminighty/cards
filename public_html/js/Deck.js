@@ -19,6 +19,8 @@ class Deck extends HTMLElement {
 		this.position = deck.position || this.position;
 		if (deck.image)
 			this.image = deck.image;
+		if (deck.shuffle)
+			ShuffleImages(...this._imageElements);
 	}
 
 	/** @param {KeyboardEvent} e */
@@ -29,6 +31,7 @@ class Deck extends HTMLElement {
 	
 	shuffle() {
 		DB.Deck.shuffle(this.id);
+		ShuffleImages(...this._imageElements);
 	}
 
 	draw() {
@@ -121,8 +124,23 @@ img {
     position: absolute;
 	width: 100px;
 	${CSS.UserSelect("none")}
+	transition: transform 200ms ease-in-out
+}
+.flip {
+	transform: rotate(180deg);
+}
+.reverseFlip {
+	transform: rotate(-180deg);
 }
 `;
+
+/** @param {HTMLElement[]} images */
+async function ShuffleImages(...images) {
+	const randomFlip = (image, index) => index % 2 ? image.classList.add("flip") : image.classList.add("reverseFlip");
+	images.forEach(randomFlip);
+	await sleep(300);
+	images.forEach((img) => img.classList.remove("flip", "reverseFlip"));
+}
 
 
 /** @type {Object<number, Deck>} */

@@ -20,6 +20,7 @@ function DeckConnection(socket, player, game) {
 			deck.shuffle();
 			deck.updateImage(game.cards);
 			socket.emit(`set deck`, deck.simplified(player));
+			return { shuffle: true, };
 		});
 	});
 
@@ -82,11 +83,11 @@ function DeckAction(game, player, callback, deckId, action) {
 		console.error(`Deck not found: ${deckId}`);
 		return;
 	}
-	action(deck);
+	const extra = action(deck);
 	if (callback)
 		callback(deck.simplified(player));
 	deck.updateImage(game.cards);
-	game.syncDeck(deck, player);
+	game.syncDeck(deck, player, extra);
 }
 
 module.exports = DeckConnection;
