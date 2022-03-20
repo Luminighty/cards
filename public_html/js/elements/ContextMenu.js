@@ -20,7 +20,7 @@ class ContextMenu extends HTMLElement {
 	 * @param {ContextMenuItemArgs<ContextType>} args 
 	 * @returns {ContextMenu.<ContextType>}
 	 */
-	button(label, onClick, ...args) {
+	button(label, onClick, args) {
 		return this.item({label, onClick, ...args});
 	}
 

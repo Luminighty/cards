@@ -82,6 +82,7 @@ const Hand = {
 };
 
 Hand.element.id = "Hand";
+Hand.element.style.zIndex = "-100";
 
 function setHandDimensions() {
 	Hand.width = document.body.clientWidth / 2;

@@ -170,7 +170,9 @@ Card.ZIndexStack = [];
 Card.ContextMenu = new ContextMenu();
 Card.ContextMenu
 	.button("Flip", (card) => card.flip())
-	.button("Take", (card) => card.take())
+	.button("Take", (card) => card.take(), {onShow: (item, card) => {
+		item.style.display = Hand.contains(card) ? "none" : "initial";
+	}})
 	.idLabel()
 ;
 
