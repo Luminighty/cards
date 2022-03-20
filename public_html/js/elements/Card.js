@@ -7,8 +7,10 @@ class Card extends HTMLElement {
 		this._imageElement = wrapper.firstElementChild;
 
 		Mixins.Draggable(this);
-		Mixins.Position(this);
+		Mixins.Transform(this);
 		Mixins.Width(this, 100, this._imageElement);
+
+		Mixins.Zoomable(this, () => URL.Card(this.image));
 
 		Mixins.HoverEvents(this);
 	}
@@ -16,27 +18,33 @@ class Card extends HTMLElement {
 	set(card) {
 		this.id = (card.id != null) ? card.id : this.id;
 		this.image = card.image || this.image;
-		this.position = card.position || this.position;
+		this.transform = card.transform || this.transform;
 	}
 
 	/** @param {KeyboardEvent} e */
 	keyup(e) {
-		if (e.key == "f" && this.hovering)
+		if (!this.hovering)
+			return;
+		if (e.key == "f")
 			this.flip();
 	}
 
-	/** @param {KeyboardEvent} e */
 	keydown(e) {
 		if (!this.hovering)
 			return;
-		if (e.key == "Tab") {
-			e.preventDefault();
+		if (e.key == "r") {
+			this.rotation += Math.PI / 16;
+			DB.Card.transform(this.id, this.transform);
 		}
 	}
 
+
 	flip() {
-		DB.Card.flip(this.id, (res) => {
+		DB.Card.flip(this.id, async (res) => {
+			this._imageElement.classList.add("flip");
+			await sleep(100);
 			this.set(res);
+			this._imageElement.classList.remove("flip");
 		});
 	}
 
@@ -119,7 +127,7 @@ class Card extends HTMLElement {
 			return;
 		e.preventDefault();
 
-		DB.Card.move(this.id, this.position);
+		DB.Card.transform(this.id, this.transform);
 	}
 
 	/** @param {MouseEvent} e */
@@ -147,6 +155,10 @@ Card.HTML = `
 Card.CSS = `
 img {
 	${CSS.UserSelect("none")}
+    transition: transform 100ms ease-in-out;
+}
+img.flip {
+    transform: scaleX(0);
 }
 `;
 
@@ -154,11 +166,12 @@ img {
 Card.Instances = {};
 Card.ZIndexStack = [];
 
-Card.ContextMenu = new ContextMenu()
-	.button("Flip", (context) => context.flip())
-	.button("Take", (context) => context.take())
-	.button("Cute dimi", (context, e) => console.log("fake"))
-	.button("Stupid lumi", (context, e) => console.log("yeah"))
+/** @type {ContextMenu.<Card>} */
+Card.ContextMenu = new ContextMenu();
+Card.ContextMenu
+	.button("Flip", (card) => card.flip())
+	.button("Take", (card) => card.take())
+	.idLabel()
 ;
 
 customElements.define('card-element', Card);

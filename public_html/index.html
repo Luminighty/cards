@@ -5,19 +5,39 @@
 		<link rel="stylesheet" href="css/styles.css">
 		<link rel="stylesheet" href="css/hand.css">
 
-		<script src="js/ContextMenu.js" defer></script>
-		<script src="js/Card.js" defer></script>
-		<script src="js/Deck.js" defer></script>
+		<script src="js/elements/ContextMenu.js" defer></script>
+		<script src="js/elements/Card.js" defer></script>
+		<script src="js/elements/Deck.js" defer></script>
+		<script src="js/elements/PlayerMouse.js" defer></script>
+
 	</head>
 	<body>
-		<script src="js/misc.js"></script>
+
+		<img id="zoomed-image" />
+
+		<div id="element-container">
+
+		</div>
+
+		<script src="js/utils/misc.js"></script>
+		<script src="js/utils/cookies.js"></script>
+		<script src="js/utils/vector.js"></script>
+		<script src="js/utils/matrix.js"></script>
+		
+
 		<script src="js/mixins/Mixins.js"></script>
+		<script src="js/mixins/Transform.js"></script>
 		<script src="js/mixins/Events.js"></script>
 		<script src="js/mixins/Draggable.js"></script>
-		<script src="js/Hand.js"></script>
-
-		<script src="js/Resources.js"></script>
+		<script src="js/mixins/Zoomable.js"></script>
+		
 		<script src="/socket.io/socket.io.js"></script>
+		
+		<script src="js/Resources.js"></script>
 		<script src="js/Connection.js" defer></script>
+		
+		<script src="js/objects/Hand.js"></script>
+		<script src="js/objects/PlayerData.js" defer></script>
+		<script src="js/objects/Camera.js" defer></script>
 	</body>
 </html>

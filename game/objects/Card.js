@@ -6,7 +6,10 @@ class Card {
 		this.front = data.front;
 		this.back = data.back;
 		this.flipped = data.flipped || false;
-		this.position = data.position || Card.Position(this);
+		this._transform = data.transform || {};
+		this._transform.position = data.position || this._transform.position || Card.Position(this);
+		this._transform.rotation = data.rotation || this._transform.rotation || 0;
+		this._transform.scale = data.scale || this._transform.scale || {x: 1, y: 1};
 		this.deck = null;
 		this.playerHand = null;
 	}
@@ -23,9 +26,21 @@ class Card {
 		return {
 			id: this.id,
 			image: this.image,
-			position: this.playerHand == null ? this.position : null,
+			transform: this.playerHand == null ? this.transform : null,
 		};
 	}
+
+	set position(value) { this.transform.position = value; }
+	get position() { return this._transform.position; }
+	
+	set rotation(value) { this.transform.rotation = value; }
+	get rotation() { return this._transform.rotation; }
+	
+	set scale(value) { this.transform.scale = value; }
+	get scale() { return this._transform.scale; }
+
+	set transform(value) { this._transform = Object.assign({}, value); }
+	get transform() {  return this._transform;}
 }
 
 Card.Position = (card) => {

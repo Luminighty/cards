@@ -4,6 +4,7 @@ socket.on("set state", (data) => {
 	console.log(data);
 	setCards(data.cards);
 	setDecks(data.decks);
+	setMouses(data.hands);
 	Hand.items = [];
 });
 
@@ -15,6 +16,16 @@ socket.on("delete card", (id) => {
 	}
 	card.remove();
 	delete Card.Instances[id];
+});
+socket.on("delete player", (id) => {
+	console.log(`delete ${id}`);
+	const mouse = PlayerMouse.Instances[id];
+	if (!mouse) {
+		console.error(`Mouse not found with ${id}`);
+		return;
+	}
+	mouse.remove();
+	delete PlayerMouse.Instances[id];
 });
 
 socket.on("delete deck", (id) => {
@@ -35,15 +46,17 @@ socket.on("delete deck", (id) => {
 const setCards = cards => setElements("card-element", Card.Instances, cards);
 /** @returns {Card} */
 const createCard = card => createElement("card-element", Card.Instances, card);
+onSetElement("card", "card-element", Card.Instances, (card) => {
+	card.setZindex();
+});
 
 const setDecks = decks => setElements("deck-element", Deck.Instances, decks);
 /** @returns {Deck} */
 const createDeck = deck => createElement("deck-element", Deck.Instances, deck);
-
-onSetElement("card", "card-element", Card.Instances, (card) => {
-	card.setZindex();
-});
 onSetElement("deck", "deck-element", Deck.Instances);
+
+const setMouses = mouses => setElements("player-mouse", PlayerMouse.Instances, mouses);
+onSetElement("player", "player-mouse", PlayerMouse);
 
 /**
  * @template T
@@ -72,6 +85,11 @@ function createElement(tagName, Instances, data) {
 	element.set(data);
 	Instances[data.id] = element;
 	element.style.position = "absolute";
-	document.body.appendChild(element);
+	ElementContainer.appendChild(element);
 	return element;
 }
+
+
+window.addEventListener("mousemove", (e) => {
+	socket.emit("mouse move", Mouse.fromEvent(e));
+});

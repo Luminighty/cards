@@ -21,6 +21,15 @@ function Connection(socket) {
 		player.leave();
 	});
 
+	socket.on("mouse move", (position) => {
+		player.mouse = position;
+		game.sync("set player", player, player);
+	});
+
+	socket.on("player data", (data, callback) => {
+		player.set(data);
+	});
+
 	DeckConnection(socket, player, game);
 	CardConnection(socket, player, game);
 	HandConnection(socket, player, game);

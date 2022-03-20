@@ -6,17 +6,21 @@ class Deck extends HTMLElement {
 		/** @type {HTMLImageElement[]} */
 		this._imageElements = Array.from(wrapper.querySelectorAll("img"));
 
-		Mixins.Position(this);
-		Mixins.Draggable(this);
+		this._imageElements.forEach((img) => img.addEventListener("load", this.onImageload.bind(this)));
 
+		Mixins.Transform(this);
+		Mixins.Draggable(this);
 		Mixins.Width(this, 100, ...this._imageElements);
+
+		Mixins.Zoomable(this, () => URL.Card(this.image[0]));
 
 		Mixins.HoverEvents(this);
 	}
 
 	set(deck) {
 		this.id = deck.id || this.id;
-		this.position = deck.position || this.position;
+		this.transform = deck.transform || this.transform;
+		this.cardCount = deck.cardCount || this.cardCount;
 		if (deck.image)
 			this.image = deck.image;
 		if (deck.shuffle)
@@ -28,6 +32,15 @@ class Deck extends HTMLElement {
 		if (e.key == "s" && this.hovering)
 			this.shuffle();
 	}
+	/** @param {KeyboardEvent} e */
+	keydown(e) {
+		if (!this.hovering)
+			return;
+		if (e.key == "r") {
+			this.rotation += Math.PI / 16;
+			DB.Deck.transform(this.id, this.transform.data)
+		}
+	}
 	
 	shuffle() {
 		DB.Deck.shuffle(this.id);
@@ -35,11 +48,12 @@ class Deck extends HTMLElement {
 	}
 
 	draw() {
+		//this.dragStart = this.dragStart || Mouse.position;
 		
-		DB.Deck.draw(this.id, this.dragStart, (card, deck, drag) => {
+		DB.Deck.draw(this.id, null, (card, deck, _) => {
 			const element = createCard(card);
 			element.take(Hand.items.length);
-			element.setDrag(drag);
+			//element.setDrag(drag);
 			element.setZindex();
 			this.set(deck);
 		});
@@ -85,7 +99,7 @@ class Deck extends HTMLElement {
 
 		if (!this.grabbed())
 			return;
-		DB.Deck.move(this.id, this.position);
+		DB.Deck.transform(this.id, this.transform);
 	}
 
 	/** @param {MouseEvent} e */
@@ -102,6 +116,12 @@ class Deck extends HTMLElement {
 			img.style.left = `${(index) * 10}px`;
 			img.style.display = value[index] ? "initial" : "none";
 		});
+	}
+
+	onImageload() {
+		const width = this.width + (this.image.length-1) * 10;
+		this.style.width = `${width}px`;
+		this.style.height = `${this._imageElements[0].height}px`;
 	}
 
 	get image() {
@@ -146,9 +166,13 @@ async function ShuffleImages(...images) {
 /** @type {Object<number, Deck>} */
 Deck.Instances = {};
 
-Deck.ContextMenu = new ContextMenu()
-	.button("Draw", (context, e) => context.draw())
-	.button("Shuffle", (context) => context.shuffle())
+/** @type {ContextMenu.<Deck>} */
+Deck.ContextMenu = new ContextMenu();
+Deck.ContextMenu
+	.button("Draw", (deck) => deck.draw())
+	.button("Shuffle", (deck) => deck.shuffle())
+	.dataLabel((item, deck) => item.innerText = `Size: ${deck.cardCount || 0}`, ContextMenuStyles.Label())
+	.idLabel()
 ;
 
 customElements.define('deck-element', Deck);

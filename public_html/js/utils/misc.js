@@ -23,6 +23,11 @@ const CSS = {
 
 const Mouse = {
 	x: 0, y: 0,
+
+	get position() {
+		return {x: this.x, y: this.y};
+	},
+
 	/** @param {MouseEvent} e */
 	fromEvent: (e) => ({x: e.clientX, y: e.clientY}),
 };
@@ -30,6 +35,7 @@ const Mouse = {
 
 const Position = {
 	delta: (a, b) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y),
+	length: (a) => Math.sqrt(a.x * a.x + a.y * a.y),
 };
 
 const Rect = {
@@ -41,6 +47,8 @@ const Rect = {
 				rect.bottom >= position.y;
 	}
 }
+
+const ElementContainer = document.getElementById("element-container");
 
 window.addEventListener("mousemove", (e) => {
 	Mouse.x = e.clientX;

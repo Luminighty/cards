@@ -11,8 +11,8 @@ const Player = require("../game/Player");
  */
 function DeckConnection(socket, player, game) {
 
-	socket.on("deck move", (id, position, callback) => {
-		DeckAction(game, player, callback, id, (deck) => deck.position = position);
+	socket.on("deck move", (id, transform, callback) => {
+		DeckAction(game, player, callback, id, (deck) => deck.transform = transform);
 	});
 
 	socket.on("deck shuffle", (id, callback) => {
@@ -40,10 +40,13 @@ function DeckConnection(socket, player, game) {
 
 	socket.on("deck create", (cardIds, callback) => {
 		const cards = cardIds.map((id) => game.cards[id]);
+		console.log(cards);
 		const deck = new Deck({
 			cards,
-			position: cards[0].position,
+			transform: cards[0].transform,
 		});
+		console.log(cards[0].transform);
+		console.log(deck.transform);
 		game.decks[deck.id] = deck;
 		deck.updateImage(game.cards);
 		game.syncDeck(deck);
@@ -63,7 +66,7 @@ function DeckConnection(socket, player, game) {
 			return;
 		}
 		deck.updateImage(game.cards);
-		card.position = Object.assign({}, deck.position);
+		card.transform = deck.transform;
 		card.deck = null;
 		callback(card.simplified(player), deck.simplified(player), drag);
 

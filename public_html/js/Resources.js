@@ -20,16 +20,16 @@ const DB = {
 		flip: (id, callback) => {
 			socket.emit("card flip", id, callback);
 		},
-		move: (id, position, callback) => {
-			socket.emit("card move", id, position, callback);
+		transform: (id, transform, callback) => {
+			socket.emit("card move", id, transform.data || transform, callback);
 		}
 	},
 	Deck: {
 		get: (id, callback) => {
 			socket.emit("get deck", id, callback);
 		},
-		move: (id, position, callback) => {
-			socket.emit("deck move", id, position, callback);
+		transform: (id, transform, callback) => {
+			socket.emit("deck move", id, transform.data || transform, callback);
 		},
 		draw: (id, drag, callback) => {
 			socket.emit("deck draw", id, drag, callback);

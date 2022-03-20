@@ -9,8 +9,11 @@ function CardConnection(socket, player, game) {
 		CardAction(game, player, callback, id, (card) => card.flipped = !card.flipped);
 	});
 
-	socket.on("card move", (id, position, callback) => {
-		CardAction(game, player, callback, id, (card) => card.position = position);
+	socket.on("card move", (id, transform, callback) => {
+		CardAction(game, player, callback, id, (card) => {
+			card.transform = transform;
+			console.log(card.transform);
+		});
 	});
 }
 

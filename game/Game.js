@@ -60,6 +60,7 @@ class Game {
 	leave(player) {
 		const index = this.players.indexOf(player);
 		this.players.splice(index, 1);
+		this.sync("delete player", player.id, player);
 	}
 
 	sync(type, data, sender, extra) {
@@ -94,7 +95,7 @@ class Game {
 		deck.cards.forEach((cardId, index) => {
 			const card = this.cards[cardId];
 			card.deck = null;
-			card.position = deck.position
+			card.position = deck.position;
 			card.position.x += index * 5;
 			this.syncCard(card);
 		});

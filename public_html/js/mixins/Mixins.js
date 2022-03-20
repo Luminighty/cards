@@ -1,11 +1,12 @@
 const Mixins = {};
 
 function Inject(object, func, callback) {
-	const old = object[func].bind(object);
+	const old = object[func] && object[func].bind(object);
 	const cb = callback.bind(object);
 	object[func] = (...args) => {
 		cb(...args);
-		old(...args);
+		if (old)
+			old(...args);
 	};
 }
 
@@ -23,20 +24,6 @@ Mixins.HTMLElement = (object, html, css) => {
 	return [wrapper, style];
 };
 
-Mixins.Position = (object) => {
-	Object.defineProperty(object, "position", {
-		get() {
-			return {
-				x: parseInt(object.style.left) || 0,
-				y: parseInt(object.style.top) || 0,
-			};
-		},
-		set(value) {
-			object.style.left = `${value.x}px`;
-			object.style.top = `${value.y}px`;
-		},
-	});
-};
 
 Mixins.Width = (object, width, ...elements) => {
 	Object.defineProperty(object, "width", {

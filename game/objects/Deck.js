@@ -12,7 +12,10 @@ class Deck {
 	constructor(data = {}) {
 		this.id = id();
 		this.cards = [];
-		this.position = data.position || {x: 0, y: 0};
+		this._transform = data.transform || {};
+		this._transform.position = data.position || this._transform.position || {x: 0, y: 0};
+		this._transform.rotation = data.rotation || this._transform.rotation || 0;
+		this._transform.scale = data.scale || this._transform.scale || {x: 1, y: 1};
 		this.image = [];
 		if (data.cards)
 			this.addCards(...data.cards);
@@ -61,7 +64,8 @@ class Deck {
 		return {
 			id: this.id,
 			image: this.image,
-			position: this.position,
+			transform: this.transform,
+			cardCount: this.cards.length,
 		};
 	}
 
@@ -69,6 +73,24 @@ class Deck {
 	updateImage(cards) {
 		const cardIds = this.cards.slice(-3);
 		this.image = cardIds.map((id) => cards[id] && cards[id].image).filter((value) => value != null);
+	}
+
+	set position(value) { this.transform.position = value; }
+	get position() { return Object.assign({}, this._transform.position); }
+	
+	set rotation(value) { this.transform.rotation = value; }
+	get rotation() { return this._transform.rotation; }
+	
+	set scale(value) { this.transform.scale = value; }
+	get scale() { return Object.assign({}, this._transform.scale); }
+
+	set transform(value) { this._transform = value; }
+	get transform() { 
+		return {
+			position: this.position,
+			rotation: this.rotation,
+			scale: this.scale,
+		};
 	}
 }
 

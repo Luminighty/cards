@@ -12,6 +12,13 @@ class Player {
 		this.game = null;
 		this.id = playerId();
 		this.hand = [];
+		this.mouse = {x: 0, y: 0};
+		this.name = "";
+		this.color = `${Math.floor(Math.random()*360)}`;
+	}
+
+	set(data) {
+		this.name = data.name || this.name;
 	}
 
 	join(game) {
@@ -31,6 +38,7 @@ class Player {
 		return {
 			cards: SimplifiedType(this.game.cards, this),
 			decks: SimplifiedType(this.game.decks, this),
+			hands: SimplifiedType(this.game.players.filter((val) => val.id != this.id), this),
 		};
 	}
 
@@ -40,6 +48,15 @@ class Player {
 
 	emit(...args) {
 		this.socket.emit(...args);
+	}
+
+	simplified(player) {
+		return {
+			id: this.id,
+			mouse: this.mouse,
+			name: this.name,
+			color: this.color,
+		};
 	}
 }
 
