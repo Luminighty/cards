@@ -6,7 +6,7 @@ class Vector3 {
 	}
 
 	get xy() {
-		return [this.x, this.y];
+		return {x: this.x, y: this.y};
 	}
 
 	add(other) {

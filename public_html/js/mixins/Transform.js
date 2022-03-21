@@ -74,4 +74,4 @@ Mixins.Transform = (object) => {
 			object.transform.update();
 		}
 	});
-}
+};

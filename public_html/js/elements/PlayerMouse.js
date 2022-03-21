@@ -5,12 +5,13 @@ class PlayerMouse extends HTMLElement {
 		/** @type {HTMLSpanElement} */
 		this.span = wrapper.firstElementChild;
 
-		Mixins.Position(this);
+		Mixins.Transform(this);
+		Mixins.Transition.Transform(this);
 	}
 
 	set(data) {
 		this.id = data.id;
-		this.position = data.mouse || this.mouse;
+		this.position = data.mouse || this.position;
 		this.name = data.name || this.name;
 		if (data.color)
 			this.color = data.color;
@@ -18,7 +19,7 @@ class PlayerMouse extends HTMLElement {
 
 	set color(color) {
 		this._color = color;
-		this.span.style.filter = `hue-rotate(${color}deg)`;
+		this.span.style.filter = `hue-rotate(${color}deg) brightness(20)`;
 	}
 
 	get color() {
@@ -39,6 +40,7 @@ span {
     overflow: hidden;
     background-repeat: no-repeat;
 	z-index: 999999;
+	transition: transform 500ms ease-in-out;
 }
 `;
 

@@ -69,6 +69,7 @@ class Game {
 				const sendData = data.simplified != null ? data.simplified(player) : data;
 				if (extra)
 					Object.assign(sendData, extra);
+				//console.log(`sync for ${player.id}`, type, sendData);
 				if (sendData != null)
 					player.socket.emit(type, sendData);
 			}

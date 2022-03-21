@@ -21,7 +21,7 @@ const DB = {
 			socket.emit("card flip", id, callback);
 		},
 		transform: (id, transform, callback) => {
-			socket.emit("card move", id, transform.data || transform, callback);
+			EmitPool.add("card transform", id, transform.data || transform, callback);
 		}
 	},
 	Deck: {
@@ -29,7 +29,7 @@ const DB = {
 			socket.emit("get deck", id, callback);
 		},
 		transform: (id, transform, callback) => {
-			socket.emit("deck move", id, transform.data || transform, callback);
+			EmitPool.add("deck transform", id, transform.data || transform, callback);
 		},
 		draw: (id, drag, callback) => {
 			socket.emit("deck draw", id, drag, callback);
@@ -48,8 +48,8 @@ const DB = {
 		add: (id, callback) => {
 			socket.emit("hand add", id, callback);
 		},
-		remove: (id, callback) => {
-			socket.emit("hand remove", id, callback);
+		remove: (id, transform, callback) => {
+			socket.emit("hand remove", id, transform, callback);
 		},
 	}
 }

@@ -37,6 +37,7 @@ app.post("/set/:game/:key", (req, res) => {
 		res.send(`Setting game to ${req.params.game}`);
 	}
 });
+
 app.get("/set", (req, res) => {
 	const games = Object.keys(Games).map((name) => `<li>${name}</li>`);
 	res.send(`<h1>Games</h1><ul>${games.join('')}</ul>`);

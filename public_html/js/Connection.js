@@ -56,7 +56,9 @@ const createDeck = deck => createElement("deck-element", Deck.Instances, deck);
 onSetElement("deck", "deck-element", Deck.Instances);
 
 const setMouses = mouses => setElements("player-mouse", PlayerMouse.Instances, mouses);
-onSetElement("player", "player-mouse", PlayerMouse);
+onSetElement("player", "player-mouse", PlayerMouse.Instances, (mouse) => {
+	mouse.style.zIndex = 99999;
+});
 
 /**
  * @template T
@@ -69,6 +71,8 @@ function onSetElement(type, tagName, Instances, callback) {
 	socket.on(`set ${type}`, (data) => {
 		const element = Instances[data.id] || createElement(tagName, Instances, data);
 		element.set(data);
+		if (element.transition)
+			element.transition.transform = "100ms";
 		if (callback)
 			callback(element);
 	});
@@ -90,6 +94,36 @@ function createElement(tagName, Instances, data) {
 }
 
 
+const EmitPool = {
+	items: {},
+	logging: false,
+	add(type, ...args) {
+		if (!this.items[type])
+			this.items[type] = [];
+		this.items[type].push(args);
+	},
+	emitAll() {
+		const saved = {};
+		for (const key in this.items) {
+			const arr = this.items[key];
+			const args = arr[arr.length - 1] || [];
+			saved[key] = arr.length;
+			socket.emit(key, ...args);
+		}
+		this.items = {};
+		if (this.logging && Object.keys(saved).length != 0)
+			console.log(saved);
+	},
+	interval: setInterval(() => {
+		EmitPool.emitAll();
+	}, 100),
+};
+
+
+
+
+
+let moveEvents = 0;
 window.addEventListener("mousemove", (e) => {
-	socket.emit("mouse move", Mouse.fromEvent(e));
+	EmitPool.add("mouse move", Camera.screenToGame(Mouse.position));
 });

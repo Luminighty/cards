@@ -11,7 +11,7 @@ const Player = require("../game/Player");
  */
 function DeckConnection(socket, player, game) {
 
-	socket.on("deck move", (id, transform, callback) => {
+	socket.on("deck transform", (id, transform, callback) => {
 		DeckAction(game, player, callback, id, (deck) => deck.transform = transform);
 	});
 
@@ -40,13 +40,10 @@ function DeckConnection(socket, player, game) {
 
 	socket.on("deck create", (cardIds, callback) => {
 		const cards = cardIds.map((id) => game.cards[id]);
-		console.log(cards);
 		const deck = new Deck({
 			cards,
 			transform: cards[0].transform,
 		});
-		console.log(cards[0].transform);
-		console.log(deck.transform);
 		game.decks[deck.id] = deck;
 		deck.updateImage(game.cards);
 		game.syncDeck(deck);
@@ -83,7 +80,7 @@ function DeckConnection(socket, player, game) {
 function DeckAction(game, player, callback, deckId, action) {
 	const deck = game.decks[deckId];
 	if (!deck) {
-		console.error(`Deck not found: ${deckId}`);
+		throw `Deck not found: ${deckId}`;
 		return;
 	}
 	const extra = action(deck);

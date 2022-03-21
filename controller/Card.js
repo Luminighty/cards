@@ -6,13 +6,15 @@
  */
 function CardConnection(socket, player, game) {
 	socket.on("card flip", (id, callback) => {
-		CardAction(game, player, callback, id, (card) => card.flipped = !card.flipped);
+		CardAction(game, player, callback, id, (card) => {
+			card.flipped = !card.flipped;
+			return {flip: true};
+		});
 	});
 
-	socket.on("card move", (id, transform, callback) => {
+	socket.on("card transform", (id, transform, callback) => {
 		CardAction(game, player, callback, id, (card) => {
 			card.transform = transform;
-			console.log(card.transform);
 		});
 	});
 }

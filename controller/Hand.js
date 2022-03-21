@@ -21,7 +21,7 @@ function HandConnection(socket, player, game) {
 			callback(card.simplified(player));
 	});
 
-	socket.on("hand remove", (id, callback) => {
+	socket.on("hand remove", (id, transform, callback) => {
 		const card = game.cards[id];
 		if (!card) {
 			console.error(`Card not found: ${id}`);
@@ -32,6 +32,7 @@ function HandConnection(socket, player, game) {
 			console.error(`Card not in hand: ${id}`);
 			return;
 		}
+		card.transform = transform;
 		card.playerHand = null;
 		player.hand.splice(index, 1);
 		game.syncCard(card, player);

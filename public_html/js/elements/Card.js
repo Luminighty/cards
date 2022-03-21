@@ -13,9 +13,15 @@ class Card extends HTMLElement {
 		Mixins.Zoomable(this, () => URL.Card(this.image));
 
 		Mixins.HoverEvents(this);
+		Mixins.Transition.Transform(this);
 	}
 
 	set(card) {
+		if (card.flip) {
+			card.flip = false;
+			this.flipAnim(card);
+			return;
+		}
 		this.id = (card.id != null) ? card.id : this.id;
 		this.image = card.image || this.image;
 		this.transform = card.transform || this.transform;
@@ -38,14 +44,15 @@ class Card extends HTMLElement {
 		}
 	}
 
+	async flipAnim(res) {
+		this._imageElement.classList.add("flip");
+		await sleep(100);
+		this.set(res);
+		this._imageElement.classList.remove("flip");
+	}
 
 	flip() {
-		DB.Card.flip(this.id, async (res) => {
-			this._imageElement.classList.add("flip");
-			await sleep(100);
-			this.set(res);
-			this._imageElement.classList.remove("flip");
-		});
+		DB.Card.flip(this.id, this.flipAnim.bind(this));
 	}
 
 	take(position) {
@@ -87,7 +94,7 @@ class Card extends HTMLElement {
 		const mouse = Mouse.fromEvent(e);
 		if (this.grabbed()) {
 			const inHand = Hand.contains(this);
-			if (Hand.isHovering(mouse)) {
+			if (Hand.isHovering(Mouse.screen)) {
 				if (!inHand) {
 					this.take();
 				} else {
@@ -96,16 +103,15 @@ class Card extends HTMLElement {
 			} else {
 				if (inHand) {
 					Hand.remove(this);
-					DB.Hand.remove(this.id);
+					DB.Hand.remove(this.id, this.transform);
 				}
-				const hoverDeck = this.isOverOther(Deck.Instances, mouse);
+				const hoverDeck = this.isOverOther(Deck.Instances, Mouse.screen);
 				if (hoverDeck)
 					DB.Deck.addCard(hoverDeck.id, this.id);
-				const hoverCard = this.isOverOther(Card.Instances, mouse);
+				const hoverCard = this.isOverOther(Card.Instances, Mouse.screen);
 				if (hoverCard)
 					DB.Deck.newDeck(hoverCard.id, this.id);
 			}
-			
 		}
 		this.drop(e);
 	}
@@ -171,7 +177,7 @@ Card.ContextMenu = new ContextMenu();
 Card.ContextMenu
 	.button("Flip", (card) => card.flip())
 	.button("Take", (card) => card.take(), {onShow: (item, card) => {
-		item.style.display = Hand.contains(card) ? "none" : "initial";
+		item.style.display = Hand.contains(card) ? "none" : "";
 	}})
 	.idLabel()
 ;

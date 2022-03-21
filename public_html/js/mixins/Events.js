@@ -6,8 +6,8 @@ Mixins.MouseEvents = (objects) => {
 };
 
 Mixins.HoverEvents = (object) => {
-	object.addEventListener("mouseenter", object.mouseenter || ((e) => {object.hovering = true;}))
-	object.addEventListener("mouseleave", object.mouseleave || ((e) => {object.hovering = false;}))
+	object.addEventListener("mouseenter", object.mouseenter || ((e) => {object.hovering = true;}));
+	object.addEventListener("mouseleave", object.mouseleave || ((e) => {object.hovering = false;}));
 }
 
 Mixins.KeyboardEvents = (objects) => {

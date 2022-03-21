@@ -30,6 +30,11 @@ function Connection(socket) {
 		player.set(data);
 	});
 
+	/*
+	socket.prependAny(async (...args) => {
+		console.log(player.id, ...args);
+	});*/
+
 	DeckConnection(socket, player, game);
 	CardConnection(socket, player, game);
 	HandConnection(socket, player, game);

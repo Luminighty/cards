@@ -15,6 +15,7 @@ class Deck extends HTMLElement {
 		Mixins.Zoomable(this, () => URL.Card(this.image[0]));
 
 		Mixins.HoverEvents(this);
+		Mixins.Transition.Transform(this);
 	}
 
 	set(deck) {

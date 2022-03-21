@@ -23,13 +23,19 @@ const CSS = {
 
 const Mouse = {
 	x: 0, y: 0,
+	screenX: 0,
+	screenY: 0,
 
 	get position() {
 		return {x: this.x, y: this.y};
 	},
 
+	get screen() {
+		return {x: this.screenX, y: this.screenY};
+	},
+
 	/** @param {MouseEvent} e */
-	fromEvent: (e) => ({x: e.clientX, y: e.clientY}),
+	fromEvent: (e) => (Camera.apply({x: e.clientX, y: e.clientY})),
 };
 
 
@@ -51,8 +57,11 @@ const Rect = {
 const ElementContainer = document.getElementById("element-container");
 
 window.addEventListener("mousemove", (e) => {
-	Mouse.x = e.clientX;
-	Mouse.y = e.clientY;
+	const {x, y} = Mouse.fromEvent(e);
+	Mouse.x = x;
+	Mouse.y = y;
+	Mouse.screenX = e.clientX;
+	Mouse.screenY = e.clientY;
 });
 
 let sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
