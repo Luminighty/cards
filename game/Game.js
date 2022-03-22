@@ -79,13 +79,13 @@ class Game {
 				if (sendData == null) 
 					continue;
 
-				if (args.extra) 
-					Object.assign(sendData, args.extra);
-
 				if (args.filter)
 					sendData = Object.keys(sendData)
 						.filter(key => args.filter.includes(key))
 						.reduce((obj, key) => ({...obj, [key]: sendData[key]}), {});
+
+				if (args.extra) 
+					Object.assign(sendData, args.extra);
 
 				player.socket.emit(type, sendData);
 				Logger.log(`sync ${type}`, sendData);
