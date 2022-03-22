@@ -204,13 +204,16 @@ ContextMenu.Instances = [];
 
 customElements.define('context-menu', ContextMenu);
 
-window.addEventListener("mouseup", (e) => {
-	for (const context of ContextMenu.Instances) {
-		if (!context.isOpen)
-			continue;
-		const rect = context.getBoundingClientRect();
-		const position = Mouse.fromEvent(e);
-		if (!Rect.contains(rect, position))
-			context.close();
-	}
+window.addEventListener("load", (e) => {
+	window.addEventListener("mouseup", (e) => {
+		for (const context of ContextMenu.Instances) {
+			if (!context.isOpen)
+				continue;
+			const rect = context.getBoundingClientRect();
+			const position = Mouse.fromEvent(e);
+			if (!Rect.contains(rect, position))
+				context.close();
+		}
+	});
 });
+

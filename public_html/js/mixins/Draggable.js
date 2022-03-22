@@ -7,6 +7,8 @@ const DraggableMixin = {
 		//if (this.width != null) this.width += 4;
 		if (this.transition)
 			this.transition.transform = null;
+		if (this.rotation != null)
+			this.rotation = -Camera.rotation;
 		this.dragOffset = {
 			x: pos.x - offset.x, // / Camera.scale,
 			y: pos.y - offset.y, // / Camera.scale,

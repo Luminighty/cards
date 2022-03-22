@@ -7,15 +7,20 @@ class PlayerMouse extends HTMLElement {
 
 		Mixins.Transform(this);
 		Mixins.Transition.Transform(this);
+
 	}
 
 	set(data) {
 		this.id = data.id;
-		this.position = data.mouse || this.position;
 		this.name = data.name || this.name;
 		if (data.color)
 			this.color = data.color;
+
+		this.position = data.mouse.position || this.position;
+		if (data.mouse.rotation != null)
+			this.rotation = data.mouse.rotation;
 	}
+
 
 	set color(color) {
 		this._color = color;

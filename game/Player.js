@@ -12,7 +12,15 @@ class Player {
 		this.game = null;
 		this.id = playerId();
 		this.hand = [];
-		this.mouse = {x: 0, y: 0};
+		this.mouse = {
+			position: {x: 0, y: 0,},
+			rotation: 0,
+		};
+		this.camera = {
+			position: {x: 0, y: 0,},
+			rotation: 0,
+			scale: 1,
+		};
 		this.name = "";
 		this.color = `${Math.floor(Math.random()*360)}`;
 	}
@@ -56,6 +64,7 @@ class Player {
 			mouse: this.mouse,
 			name: this.name,
 			color: this.color,
+			camera: this.camera,
 		};
 	}
 }

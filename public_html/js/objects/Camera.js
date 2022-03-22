@@ -1,4 +1,6 @@
 
+const ElementContainer = document.getElementById("element-container");
+
 const Camera = {
 	set position(value) {
 		this._.position = value;
@@ -11,6 +13,7 @@ const Camera = {
 	set rotation(value) {
 		this._.rotation = value;
 		this.update();
+		DB.Mouse.rotate(-this.rotation);
 	},
 	get rotation() {
 		return this._.rotation;
@@ -28,19 +31,34 @@ const Camera = {
 		const r = this.rotation;
 		const s = this.scale;
 
+		//console.log(p, r, s);
+
 		const transform = `scale(${s}) rotate(${r}rad) translate(${p.x}px, ${p.y}px)`
 		ElementContainer.style.transform = transform;
-		document.getElementById("background").style.transform = `translate(-50%, -50%) ${transform}`;
-		//document.body.style.backgroundPosition = `${p.x}px ${p.y}px`;
+		
+		DB.Camera.transform(this);
+	},
+	get data() {
+		return {
+			position: this.position,
+			rotation: this.rotation,
+			scale: this.scale,
+		};
 	},
 	_: {
 		position: {x: 0, y: 0},
 		rotation: 0,
 		scale: 1,
 	},
-	grabbed: false,
-	rotating: null,
-	moved: false,
+	bounds: {
+		minX: -2000,
+		minY: -2000,
+		maxX: 2000,
+		maxY: 2000,
+	},
+	_grabbed: false,
+	_rotating: null,
+	_moved: false,
 	apply(position) {
 		const vec = new Vector3({z: 1, ...position});
 		return Matrix3.multiply(
@@ -60,8 +78,14 @@ const Camera = {
 
 	screenToGame(position) {
 		const vec = new Vector3({z: 1, ...position});
+		const screen = {x: window.innerWidth / 2, y: window.innerHeight / 2};
 		return Matrix3.multiply(
 			Matrix3.translate(-this.position.x, -this.position.y),
+			Matrix3.translate(screen.x, screen.y),
+			
+			Matrix3.rotate(-this.rotation),
+			
+			Matrix3.translate(-screen.x, -screen.y),
 			//Matrix3.rotate(-this.rotation),
 			//Matrix3.scale(-this.scale, -this.scale),
 			vec
@@ -69,31 +93,37 @@ const Camera = {
 	}
 };
 
-window.addEventListener("mousedown", (e) => {
-	if (e.button == 2) {
-		Camera.moved = false;
-		Camera.grabbed = Mouse.fromEvent(e);
-	}
+window.addEventListener("load", () => {
+
+	window.addEventListener("mousedown", (e) => {
+		if (e.button == 2) {
+			Camera._moved = false;
+			Camera._grabbed = Mouse.fromEvent(e);
+		}
+	});
+	
+	window.addEventListener("contextmenu", (e) => {
+		if (Camera._moved)
+			e.preventDefault();
+		Camera._grabbed = false;
+	});
+	
+	window.addEventListener("mousemove", (e) => {
+		if (Camera._grabbed) {
+			Camera._moved = true;
+			const vec = new Vector3([e.movementX, e.movementY, 1]);
+			const applied = Matrix3.multiply(
+				Matrix3.rotate(-Camera.rotation),
+				Matrix3.scale(1/Camera.scale, 1/Camera.scale),
+				vec
+			);
+			const pos = Camera.position;
+			pos.x = Math.clamp(pos.x + applied.x, Camera.bounds.minX, Camera.bounds.maxX);
+			pos.y = Math.clamp(pos.y + applied.y, Camera.bounds.minY, Camera.bounds.maxY);
+			Camera.position = pos;
+		}
+	});
+	
 });
 
-window.addEventListener("contextmenu", (e) => {
-	if (Camera.moved)
-		e.preventDefault();
-	Camera.grabbed = false;
-});
-
-window.addEventListener("mousemove", (e) => {
-	if (Camera.grabbed) {
-		Camera.moved = true;
-		const vec = new Vector3([e.movementX, e.movementY, 1]);
-		const applied = Matrix3.multiply(
-			Matrix3.rotate(-Camera.rotation),
-			Matrix3.scale(1/Camera.scale, 1/Camera.scale),
-			vec
-		);
-		const pos = Camera.position;
-		pos.x += applied.x;
-		pos.y += applied.y;
-		Camera.position = pos;
-	}
-});
+//Camera.update();

@@ -12,7 +12,10 @@ const Player = require("../game/Player");
 function DeckConnection(socket, player, game) {
 
 	socket.on("deck transform", (id, transform, callback) => {
-		DeckAction(game, player, callback, id, (deck) => deck.transform = transform);
+		DeckAction(game, player, callback, id, (deck) => {
+			deck.transform = transform;
+			return {filter: ["id", "transform"]};
+		});
 	});
 
 	socket.on("deck shuffle", (id, callback) => {
@@ -20,7 +23,7 @@ function DeckConnection(socket, player, game) {
 			deck.shuffle();
 			deck.updateImage(game.cards);
 			socket.emit(`set deck`, deck.simplified(player));
-			return { shuffle: true, };
+			return { extra: {shuffle: true,}, filter: ["id", "image"] };
 		});
 	});
 
@@ -35,6 +38,7 @@ function DeckConnection(socket, player, game) {
 			deck.updateImage(game.cards);
 			game.broadcast("delete card", card.id);
 			game.syncDeck(deck);
+			return { filter: ["id", "image", "cardCount"] };
 		});
 	});
 
@@ -72,22 +76,36 @@ function DeckConnection(socket, player, game) {
 		if (deck.cards.length < 2) {
 			game.deleteDeck(deck);
 		} else {
-			game.syncDeck(deck, player);
+			game.syncDeck(deck, player, {filter: ["id", "image", "cardCount"]});
 		}
 	});
 }
 
+/**
+ * @callback DeckActionCallback
+ * @param {Deck} card
+ * @returns {import("../game/Game.js").SyncArgs}
+ */
+
+/**
+ * 
+ * @param {Game} game 
+ * @param {Player} player 
+ * @param {Function} callback 
+ * @param {number} deckId 
+ * @param {DeckActionCallback} action 
+ * @returns 
+ */
 function DeckAction(game, player, callback, deckId, action) {
 	const deck = game.decks[deckId];
 	if (!deck) {
 		throw `Deck not found: ${deckId}`;
-		return;
 	}
-	const extra = action(deck);
+	const args = action(deck);
 	if (callback)
 		callback(deck.simplified(player));
 	deck.updateImage(game.cards);
-	game.syncDeck(deck, player, extra);
+	game.syncDeck(deck, player, args);
 }
 
 module.exports = DeckConnection;

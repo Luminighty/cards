@@ -101,6 +101,7 @@ function setHandDimensions() {
 	Hand.height = 100;
 	Hand.sortItems();
 }
-
-window.addEventListener("resize", setHandDimensions);
-setHandDimensions();
+window.addEventListener("load", () => {
+	window.addEventListener("resize", setHandDimensions);
+	setHandDimensions();
+});

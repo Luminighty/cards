@@ -62,14 +62,15 @@ Mixins.Transform = (object) => {
 		get() {return object.transform.rotation;},
 		set(value) {object.transform.rotation = value;},
 	});
+	if (!object.transform)
 	Object.defineProperty(object, "transform", {
 		get() {return object._transform;},
 		set(value) {
-			if (value.position)
+			if (value.position != null)
 				object.transform.position = value.position;
-			if (value.rotation)
+			if (value.rotation != null)
 				object.transform.rotation = value.rotation;
-			if (value.scale)
+			if (value.scale != null)
 				object.transform.scale = value.scale;
 			object.transform.update();
 		}

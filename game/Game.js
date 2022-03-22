@@ -2,6 +2,13 @@ const { loadCards } = require("../resources/GameLoader");
 const Card = require("./objects/Card");
 const Deck = require("./objects/Deck");
 const Player = require("./Player");
+const Logger = require("../utils/logger");
+
+/**
+ * @typedef {Object} SyncArgs
+ * @property {Object} extra Extra information to attach
+ * @property {string[]} filter Which fields to send
+ */
 
 class Game {
 	constructor() {
@@ -15,8 +22,7 @@ class Game {
 
 	/** @param {import("../resources/GameLoader").GameData} gameData */
 	setGame(gameData) {
-		if (!gameData)
-			return;
+		if (!gameData) return;
 		this.cards = {};
 		this.decks = {};
 
@@ -27,29 +33,24 @@ class Game {
 
 		for (const data of gameData.decks) {
 			data.cards = data.cards.map((v) => new Card(v));
-			data.cards.forEach((card) => this.cards[card.id] = card);
+			data.cards.forEach((card) => (this.cards[card.id] = card));
 			const deck = new Deck(data);
 			this.decks[deck.id] = deck;
 			deck.updateImage(this.cards);
 		}
+		this.refresh();
 
-		for (const player of this.players) {
-			player.clear();
-			player.emit("set state", player.gamestate);
-		}
 		return this;
 	}
 
 	/**
 	 * @template T
-	 * @param {T} element 
+	 * @param {T} element
 	 * @returns {T}
 	 */
 	add(element) {
-		if (element instanceof Deck)
-			this.decks[element.id] = element;
-		if (element instanceof Card)
-			this.cards[element.id] = element;
+		if (element instanceof Deck) this.decks[element.id] = element;
+		if (element instanceof Card) this.cards[element.id] = element;
 		return element;
 	}
 
@@ -63,29 +64,60 @@ class Game {
 		this.sync("delete player", player.id, player);
 	}
 
-	sync(type, data, sender, extra) {
+	/**
+	 *
+	 * @param {string} type
+	 * @param {*} data
+	 * @param {Player} sender
+	 * @param {SyncArgs} args
+	 */
+	sync(type, data, sender, args = {}) {
 		for (const player of this.players) {
 			if (sender != player) {
-				const sendData = data.simplified != null ? data.simplified(player) : data;
-				//console.log(`sync for ${player.id}`, type, sendData);
-				if (sendData != null) {
-					if (extra)
-						Object.assign(sendData, extra);
-					player.socket.emit(type, sendData);
-				}
+				let sendData =
+					data.simplified != null ? data.simplified(player) : data;
+				if (sendData == null) 
+					continue;
+
+				if (args.extra) 
+					Object.assign(sendData, args.extra);
+
+				if (args.filter)
+					sendData = Object.keys(sendData)
+						.filter(key => args.filter.includes(key))
+						.reduce((obj, key) => ({...obj, [key]: sendData[key]}), {});
+
+				player.socket.emit(type, sendData);
+				Logger.log(`sync ${type}`, sendData);
 			}
 		}
 	}
 
+	/**
+	 * @param {Card} deck 
+	 * @param {Player} sender 
+	 * @param {SyncArgs} extra 
+	 */
 	syncCard(card, sender, extra) {
 		this.sync("set card", card, sender, extra);
 	}
+
+	/**
+	 * @param {Deck} deck 
+	 * @param {Player} sender 
+	 * @param {SyncArgs} extra 
+	 */
 	syncDeck(deck, sender, extra) {
 		this.sync("set deck", deck, sender, extra);
 	}
 
 	// Resets the state for everyone
-	refresh() {}
+	refresh() {
+		for (const player of this.players) {
+			player.clear();
+			player.emit("set state", player.gamestate);
+		}
+	}
 
 	broadcast(...data) {
 		for (const player of this.players) player.socket.emit(...data);

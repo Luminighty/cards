@@ -9,7 +9,7 @@ body {
 #background {
 	background: url("../img/background.png");
 	background-repeat: repeat;
-	transform: translate((-50%, -50%));
+	transform: translate(-50%, -50%);
 	width: 1000vw;
 	height: 1000vh;
 	z-index: -10000;

@@ -3,6 +3,7 @@ const Game = require("../game/Game");
 const Card = require("../game/objects/Card");
 const Deck = require("../game/objects/Deck");
 const Player = require("../game/Player");
+const Logger = require("../utils/logger");
 const CardConnection = require("./Card");
 const DeckConnection = require("./Deck");
 const HandConnection = require("./Hand");
@@ -22,18 +23,26 @@ function Connection(socket) {
 	});
 
 	socket.on("mouse move", (position) => {
-		player.mouse = position;
-		game.sync("set player", player, player);
+		player.mouse.position = position;
+		game.sync("set player", player, player, {filter: ["id", "mouse"]});
+	});
+	socket.on("mouse rotate", (rotation) => {
+		player.mouse.rotation = rotation;
+		game.sync("set player", player, player, {filter: ["id", "mouse"]});
+	});
+	socket.on("camera transform", (transform) => {
+		player.camera = transform;
+		game.sync("set player", player, player, {filter: ["id", "camera"]});
 	});
 
 	socket.on("player data", (data, callback) => {
 		player.set(data);
 	});
 
-	/*
+	
 	socket.prependAny(async (...args) => {
-		console.log(player.id, ...args);
-	});*/
+		Logger.log(player.id, ...args);
+	});
 
 	DeckConnection(socket, player, game);
 	CardConnection(socket, player, game);

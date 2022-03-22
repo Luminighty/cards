@@ -1,6 +1,7 @@
 const socket = io();
 
 socket.on("set state", (data) => {
+	console.log("Setting state...");
 	console.log(data);
 	setCards(data.cards);
 	setDecks(data.decks);
@@ -72,7 +73,7 @@ function onSetElement(type, tagName, Instances, callback) {
 		const element = Instances[data.id] || createElement(tagName, Instances, data);
 		element.set(data);
 		if (element.transition)
-			element.transition.transform = "100ms";
+			element.transition.transform = `${EmitPool.delay * 2}ms ease-out`;
 		if (callback)
 			callback(element);
 	});
@@ -80,11 +81,15 @@ function onSetElement(type, tagName, Instances, callback) {
 
 function setElements(tagName, Instances, elements) {
 	document.querySelectorAll(tagName).forEach((element) => element.remove());
+	for (const key in Instances)
+		delete Instances[key];
 	for (const data of elements)
 		createElement(tagName, Instances, data);
 }
 
 function createElement(tagName, Instances, data) {
+	if (Instances[data.id])
+		return Instances[data.id];
 	const element = document.createElement(tagName);
 	element.set(data);
 	Instances[data.id] = element;
@@ -114,16 +119,18 @@ const EmitPool = {
 		if (this.logging && Object.keys(saved).length != 0)
 			console.log(saved);
 	},
-	interval: setInterval(() => {
-		EmitPool.emitAll();
-	}, 100),
+	set delay(value) {
+		this._delay = value;
+		if (this.interval != null)
+			clearInterval(this.interval);
+		this.interval = setInterval(() => {
+			EmitPool.emitAll();
+		}, value);
+	},
+	get delay() {
+		return this._delay;
+	}
 };
+EmitPool.delay = 100;
 
 
-
-
-
-let moveEvents = 0;
-window.addEventListener("mousemove", (e) => {
-	EmitPool.add("mouse move", Camera.screenToGame(Mouse.position));
-});
