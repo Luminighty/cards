@@ -7,7 +7,8 @@ interface Card extends GameElement, HoverEvents, KeyboardEvents, MouseEvents, Tr
 };
 
 interface Deck extends GameElement, HoverEvents, KeyboardEvents, MouseEvents, Transform, Draggable {
-	width: number
+	width: number,
+
 }
 
 interface Math {

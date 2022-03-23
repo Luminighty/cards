@@ -56,7 +56,7 @@ const Camera = {
 		maxX: 2000,
 		maxY: 2000,
 	},
-	_rotationSpeed: 1000,
+	_rotationSpeed: 500,
 	_grabbed: false,
 	_rotating: null,
 	_moved: false,

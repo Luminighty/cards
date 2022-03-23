@@ -1,3 +1,4 @@
+// @ts-ignore
 const socket = io();
 
 socket.on("set state", (data) => {
@@ -62,11 +63,10 @@ onSetElement("player", "player-mouse", PlayerMouse.Instances, (mouse) => {
 });
 
 /**
- * @template T
  * @param {string} type 
  * @param {string} tagName 
- * @param {Object<string, T>} Instances 
- * @param {(element: T) => {}=} callback 
+ * @param {Object<string, Object>} Instances 
+ * @param {(element: Object) => void=} callback 
  */
 function onSetElement(type, tagName, Instances, callback) {
 	socket.on(`set ${type}`, (data) => {
@@ -132,5 +132,3 @@ const EmitPool = {
 	}
 };
 EmitPool.delay = 100;
-
-

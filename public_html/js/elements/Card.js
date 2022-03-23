@@ -1,6 +1,3 @@
-/**
- * @interface Card
- */
 class Card extends HTMLElement {
 	constructor() {
 		super();
@@ -87,16 +84,17 @@ class Card extends HTMLElement {
 
 	/** @param {MouseEvent} e */
 	mousedown(e) {
-		if (e.button == 2)
+		if (e.button != 0)
 			return;
 		e.preventDefault();
-		
 		this.drag(e, Hand.contains(this) && Hand.position);
 		this.setZindex();
 	}
 
 	/** @param {MouseEvent} e */
 	mouseup(e) {
+		if (e.button != 0)
+			return;
 		const mouse = Mouse.fromEvent(e);
 		if (this.grabbed()) {
 			const inHand = Hand.contains(this);
@@ -190,7 +188,7 @@ Card.ZIndexStack = [];
 Card.ContextMenu = new ContextMenu();
 Card.ContextMenu
 	.button("Flip", (card) => card.flip())
-	.button("Take", (card) => card.take(), {onShow: (item, card) => {
+	.button("Take", (card) => card.take(), {onShow: (card, item) => {
 		item.style.display = Hand.contains(card) ? "none" : "";
 	}})
 	.idLabel()

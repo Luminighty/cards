@@ -63,7 +63,7 @@ class Deck extends HTMLElement {
 
 	/** @param {MouseEvent} e */
 	mousedown(e) {
-		if (e.button == 2)
+		if (e.button != 0)
 			return;
 		e.preventDefault();
 		this.dragStart = Mouse.fromEvent(e);
@@ -80,6 +80,8 @@ class Deck extends HTMLElement {
 
 	/** @param {MouseEvent} e */
 	mouseup(e) {
+		if (e.button != 0)
+			return;
 		this.drop(e);
 		this.dragStart = null;
 	}

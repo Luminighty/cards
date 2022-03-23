@@ -92,7 +92,7 @@ class ContextMenu extends HTMLElement {
 
 	open(e, context) {
 		for (const [item, cb] of this.onShowCallbacks)
-			cb(item, context, e);
+			cb(context, item, e);
 		const {clientX: x, clientY: y} = e;
 		this.wrapper.style.left = `${x}px`;
 		this.wrapper.style.top = `${y}px`;

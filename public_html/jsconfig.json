@@ -1,8 +1,8 @@
 {
     "include": [
         "./js/**/*",
+        "../typedef/shared/**/*.d.ts",
         "../typedef/public_html/**/*.d.ts",
-        "../typedef/shared/**/*.d.ts"
     ],
     "compilerOptions": {
         "target": "ES6",
