@@ -1,3 +1,4 @@
+/** @param {Object<number, Object>} objects */
 Mixins.MouseEvents = (objects) => {
 	mixinEvent("mousedown", objects);
 	mixinEvent("contextmenu", objects);
@@ -5,11 +6,13 @@ Mixins.MouseEvents = (objects) => {
 	mixinEvent("mousemove", objects, false);
 };
 
+/** @param {Object} object */
 Mixins.HoverEvents = (object) => {
 	object.addEventListener("mouseenter", object.mouseenter || ((e) => {object.hovering = true;}));
 	object.addEventListener("mouseleave", object.mouseleave || ((e) => {object.hovering = false;}));
-}
+};
 
+/** @param {Object<number, Object>} objects */
 Mixins.KeyboardEvents = (objects) => {
 	mixinEvent("keydown", objects, false);
 	mixinEvent("keyup", objects, false);

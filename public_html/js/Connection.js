@@ -65,8 +65,8 @@ onSetElement("player", "player-mouse", PlayerMouse.Instances, (mouse) => {
  * @template T
  * @param {string} type 
  * @param {string} tagName 
- * @param {Object<number, T>} Instances 
- * @param {(element: T) => {}} callback 
+ * @param {Object<string, T>} Instances 
+ * @param {(element: T) => {}=} callback 
  */
 function onSetElement(type, tagName, Instances, callback) {
 	socket.on(`set ${type}`, (data) => {

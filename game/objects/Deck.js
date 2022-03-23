@@ -3,22 +3,21 @@ const Card = require("./Card");
 const { id } = require("../../utils/id");
 
 class Deck {
+	
 	/**
-	 * @param {Object} data 
-	 * @param {Array<(Card | number)>} [data.cards=[]]
-	 * @param {{x: number, y: number}} [data.position={x:0, y:0}]
-	 * @param {boolean} [data.shuffle=false]
+	 * @param {DeckData=} data 
 	 */
 	constructor(data = {}) {
 		this.id = id();
+		/** @type {number[]} */
 		this.cards = [];
-		this._transform = data.transform || {};
-		this._transform.position = data.position || this._transform.position || {x: 0, y: 0};
-		this._transform.rotation = data.rotation || this._transform.rotation || 0;
-		this._transform.scale = data.scale || this._transform.scale || {x: 1, y: 1};
+		this._transform = {
+			position: data.position || {x: 0, y: 0},
+			rotation: data.rotation || 0,
+			scale: data.scale || {x: 1, y: 1},
+		};
+		/** @type {string[]} */
 		this.image = [];
-		if (data.cards)
-			this.addCards(...data.cards);
 		if (data.shuffle)
 			this.shuffle();
 	}
@@ -39,11 +38,11 @@ class Deck {
 
 	/** @param  {...Card} cards */
 	addCards(...cards) {
-		cards = cards.map((card) => {
+		const ids = cards.map((card) => {
 			card.deck = this.id;
 			return card.id;
 		});
-		this.cards.push(...cards);
+		this.cards.push(...ids);
 	}
 
 	/** @returns {number} card.id */

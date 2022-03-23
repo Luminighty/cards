@@ -1,30 +1,35 @@
+/**
+ * @interface Card
+ */
 class Card extends HTMLElement {
 	constructor() {
 		super();
+		/**
+		 * @type {[HTMLSpanElement, HTMLStyleElement]} element
+		 * @property {HTMLImageElement} element[0].firstElementChild
+		 */
 		const [wrapper, _] = Mixins.HTMLElement(this, Card.HTML, Card.CSS);
-
-		/** @type {HTMLImageElement} */
-		this._imageElement = wrapper.firstElementChild;
+		
+		this._imageElement = /** @type {HTMLImageElement} */ (wrapper.firstElementChild);
 
 		Mixins.Draggable(this);
 		Mixins.Transform(this);
 		Mixins.Width(this, 100, this._imageElement);
 
-		Mixins.Zoomable(this, () => URL.Card(this.image));
+		Mixins.Zoomable(this, () => Resource.Card(this.image));
 
 		Mixins.HoverEvents(this);
 		Mixins.Transition.Transform(this);
 	}
 
 	set(card) {
-		if (card.flip) {
-			card.flip = false;
-			this.flipAnim(card);
-			return;
-		}
 		this.id = (card.id != null) ? card.id : this.id;
-		this.image = card.image || this.image;
 		this.transform = card.transform || this.transform;
+		if (card.flip) {
+			this.flipAnim(card);
+		} else {
+			this.image = card.image || this.image;
+		}
 	}
 
 	/** @param {KeyboardEvent} e */
@@ -44,10 +49,10 @@ class Card extends HTMLElement {
 		}
 	}
 
-	async flipAnim(res) {
+	async flipAnim(data) {
 		this._imageElement.classList.add("flip");
 		await sleep(100);
-		this.set(res);
+		this.image = data.image || this.image;
 		this._imageElement.classList.remove("flip");
 	}
 
@@ -77,7 +82,7 @@ class Card extends HTMLElement {
 	}
 
 	set zIndex(value) {
-		this.style.zIndex = value;
+		this.style.zIndex = `${value}`;
 	}
 
 	/** @param {MouseEvent} e */
@@ -85,7 +90,8 @@ class Card extends HTMLElement {
 		if (e.button == 2)
 			return;
 		e.preventDefault();
-		this.drag(e);
+		
+		this.drag(e, Hand.contains(this) && Hand.position);
 		this.setZindex();
 	}
 
@@ -116,6 +122,12 @@ class Card extends HTMLElement {
 		this.drop(e);
 	}
 
+	/**
+	 * 
+	 * @param {Object<number, {clientRects: Array, id: string}>} instances 
+	 * @param {Vector2} mouse 
+	 * @returns 
+	 */
 	isOverOther(instances, mouse) {
 		for(const id in instances) {
 			if (id == this.id)
@@ -132,7 +144,9 @@ class Card extends HTMLElement {
 		if (!this.grabbed())
 			return;
 		e.preventDefault();
-
+		const inHand = Hand.contains(this);
+		if (inHand)
+			return;
 		DB.Card.transform(this.id, this.transform);
 	}
 
@@ -144,7 +158,7 @@ class Card extends HTMLElement {
 
 	set image(value) { 
 		this._image = value;
-		this._imageElement.src = URL.Card(value);
+		this._imageElement.src = Resource.Card(value);
 	}
 
 	get image() { return this._image; }
@@ -160,7 +174,7 @@ Card.HTML = `
 
 Card.CSS = `
 img {
-	${CSS.UserSelect("none")}
+	${CSSStyles.UserSelect("none")}
     transition: transform 100ms ease-in-out;
 }
 img.flip {
@@ -168,7 +182,7 @@ img.flip {
 }
 `;
 
-/** @type {Object<number, Card>} */
+/** @type {Object<string, Card>} */
 Card.Instances = {};
 Card.ZIndexStack = [];
 

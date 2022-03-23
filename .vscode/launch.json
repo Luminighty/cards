@@ -15,6 +15,13 @@
 				"--trace-warnings"
 			],
 			"program": "${workspaceFolder}\\index.js"
+		},
+		{
+			"name": "Launch Chrome",
+			"request": "launch",
+			"type": "pwa-chrome",
+			"url": "http://localhost:5000",
+			"webRoot": "${workspaceFolder}"
 		}
 	]
 }

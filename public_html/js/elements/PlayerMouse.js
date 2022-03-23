@@ -2,12 +2,11 @@ class PlayerMouse extends HTMLElement {
 	constructor() {
 		super();
 		const [wrapper, _] = Mixins.HTMLElement(this, PlayerMouse.HTML, PlayerMouse.CSS);
-		/** @type {HTMLSpanElement} */
-		this.span = wrapper.firstElementChild;
+		
+		this.span = /** @type {HTMLSpanElement} */ (wrapper.firstElementChild);
 
 		Mixins.Transform(this);
 		Mixins.Transition.Transform(this);
-
 	}
 
 	set(data) {
@@ -16,9 +15,10 @@ class PlayerMouse extends HTMLElement {
 		if (data.color)
 			this.color = data.color;
 
-		this.position = data.mouse.position || this.position;
-		if (data.mouse.rotation != null)
+		if (data.mouse) {
+			this.position = data.mouse.position;
 			this.rotation = data.mouse.rotation;
+		}
 	}
 
 
@@ -32,7 +32,7 @@ class PlayerMouse extends HTMLElement {
 	}
 }
 
-/** @type {Object<number, PlayerMouse>} */
+/** @type {Object<string, PlayerMouse>} */
 PlayerMouse.Instances = {};
 PlayerMouse.HTML = `<span></span>`;
 

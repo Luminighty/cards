@@ -9,17 +9,22 @@ class Vector3 {
 		return {x: this.x, y: this.y};
 	}
 
+	/** @param {Vector3} other */
 	add(other) {
 		return this.apply(other, (a, b) => a + b);
 	}
+
+	/** @param {Vector3} other */
 	sub(other) {
 		return this.apply(other, (a, b) => a - b);
 	}
 
+	/** @param {number} other */
 	mul(other) {
 		return new Vector3([this.x * other, this.y * other, this.z * other]);
 	}
 
+	/** @param {number} other */
 	div(other) {
 		return new Vector3([this.x / other, this.y / other, this.z / other]);
 	}
@@ -28,55 +33,51 @@ class Vector3 {
 		return (typeof(other) == "function") ? 
 			new Vector3([other(this.x), other(this.y), other(this.y)]) :
 			new Vector3([
-			func(this.x, other.x),
-			func(this.y, other.y),
-			func(this.z, other.z)
-		]);
+				func(this.x, other.x),
+				func(this.y, other.y),
+				func(this.z, other.z)
+			]);
+	}
+
+	/** 
+	 * @template {(Matrix3 | Vector3)} T
+	 * @param {T} other
+	 * @returns {T}
+	 */
+	multiply(other) {
+		return null;
 	}
 }
-/** @type {Vector3} */
-Vector3.zero = {};
 Object.defineProperty(Vector3, "zero", {
 	get() {
 		return new Vector3([0, 0, 0]);
 	}
 });
 
-/** @type {Vector3} */
-Vector3.one = {};
 Object.defineProperty(Vector3, "one", {
 	get() {
 		return new Vector3([1, 1, 1]);
 	}
 });
-/** @type {Vector3} */
-Vector3.up = {};
 Object.defineProperty(Vector3, "up", {
 	get() {
 		return new Vector3([0, 1, 0]);
 	}
 });
-/** @type {Vector3} */
-Vector3.down = {};
 Object.defineProperty(Vector3, "down", {
 	get() {
 		return new Vector3([0, -1, 0]);
 	}
 });
-/** @type {Vector3} */
-Vector3.right = {};
 Object.defineProperty(Vector3, "right", {
 	get() {
 		return new Vector3([1, 0, 0]);
 	}
 });
-/** @type {Vector3} */
-Vector3.left = {};
 Object.defineProperty(Vector3, "left", {
 	get() {
 		return new Vector3([-1, 0, 0]);
 	}
 });
-
-
+/** @param {number} z */ 
 Vector3.z = (z) => new Vector3([0, 0, z]);

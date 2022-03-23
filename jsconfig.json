@@ -1,0 +1,15 @@
+{
+    "include": [
+        "./**/*.js",
+        "./typedef/shared/**/*.d.ts",
+        "./typedef/server/**/*.d.ts",
+    ],
+    "exclude": [
+        "./public_html/**",
+    ],
+    "compilerOptions": {
+        "moduleResolution": "node",
+        "target": "ES6",
+        "checkJs": true,
+    }
+}

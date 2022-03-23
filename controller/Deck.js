@@ -44,11 +44,11 @@ function DeckConnection(socket, player, game) {
 
 	socket.on("deck create", (cardIds, callback) => {
 		const cards = cardIds.map((id) => game.cards[id]);
-		const deck = new Deck({
-			cards,
-			transform: cards[0].transform,
-		});
+		const deck = new Deck();
+		deck.addCards(...cards);
+		deck.transform = cards[0].transform;
 		game.decks[deck.id] = deck;
+
 		deck.updateImage(game.cards);
 		game.syncDeck(deck);
 		cards.forEach((card) => game.broadcast("delete card", card.id));

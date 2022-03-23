@@ -8,7 +8,7 @@
  */
 
 
-const URL = {
+const Resource = {
 	Card: (value) => value ? `res/${value}` : "",
 }
 

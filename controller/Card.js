@@ -1,3 +1,4 @@
+const { Socket } = require("socket.io");
 const Game = require("../game/Game.js");
 const Card = require("../game/objects/Card");
 const Player = require("../game/Player.js");

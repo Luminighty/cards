@@ -1,5 +1,5 @@
 class Matrix3 {
-	/** @param {Object.<string, number>} data */
+	
 	constructor(data) {
 		this.c11 = data.c11 || data[0] || 0;
 		this.c12 = data.c12 || data[1] || 0;
@@ -36,8 +36,6 @@ class Matrix3 {
 	}
 }
 
-/** @type {Matrix3} */
-Matrix3.identity = {};
 Object.defineProperty(Matrix3, "identity", {
 	get() {
 		return new Matrix3([1, 0, 0,
@@ -45,6 +43,7 @@ Object.defineProperty(Matrix3, "identity", {
 							0, 0, 1]);
 	}
 });
+
 
 Matrix3.col1 = (r1, r2, r3) => 
 	new Matrix3([r1, 0, 0,
@@ -82,14 +81,22 @@ Matrix3.row1 = (c1, c2, c3) =>
 				0, 0, 0,
 				c1, c2, c3,]);
 
-
+/**
+ * @param {number} c11 
+ * @param {number} c22 
+ * @param {number} c33 
+ * @returns 
+ */
 Matrix3.diag = (c11, c22, c33) => 
 	new Matrix3([c11, 0, 0,
 				0, c22, 0,
 				0, 0, c33]);
 
 
-/** @param {Matrix3[]} matrixes */
+/** 
+ * @param {(Matrix3 | Vector3)[]} matrixes 
+ * @returns {any}
+ */
 Matrix3.multiply = (...matrixes) =>
 	matrixes.reduceRight((prev, curr) => curr.multiply(prev)).apply({}, (self) => Math.round(self * MatrixPrecision) / MatrixPrecision);
 

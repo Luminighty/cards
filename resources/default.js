@@ -15,4 +15,4 @@ module.exports = function() {
 			position: {x: 300, y: 300},
 		}]
 	};
-}
+};

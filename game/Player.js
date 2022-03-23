@@ -54,8 +54,8 @@ class Player {
 		this.hand = [];
 	}
 
-	emit(...args) {
-		this.socket.emit(...args);
+	emit(ev, ...args) {
+		this.socket.emit(ev, ...args);
 	}
 
 	simplified(player) {

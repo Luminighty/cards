@@ -1,5 +1,6 @@
 const Mixins = {};
 
+
 function Inject(object, func, callback) {
 	const old = object[func] && object[func].bind(object);
 	const cb = callback.bind(object);
@@ -10,7 +11,12 @@ function Inject(object, func, callback) {
 	};
 }
 
-/** @returns {[HTMLSpanElement, HTMLStyleElement]} wrapper, style */
+/** 
+ * @param {Object} object
+ * @param {string} html
+ * @param {string} css
+ * @returns {[HTMLSpanElement, HTMLStyleElement]} wrapper, style 
+ */
 Mixins.HTMLElement = (object, html, css) => {
 	object.attachShadow({ mode: "open" });
 
@@ -25,6 +31,11 @@ Mixins.HTMLElement = (object, html, css) => {
 };
 
 
+/** 
+ * @param {Object} object 
+ * @param {number} width
+ * @param {HTMLElement[]} elements
+ */
 Mixins.Width = (object, width, ...elements) => {
 	Object.defineProperty(object, "width", {
 		get() {

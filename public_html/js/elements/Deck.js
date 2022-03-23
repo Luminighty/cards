@@ -12,7 +12,7 @@ class Deck extends HTMLElement {
 		Mixins.Draggable(this);
 		Mixins.Width(this, 100, ...this._imageElements);
 
-		Mixins.Zoomable(this, () => URL.Card(this.image[0]));
+		Mixins.Zoomable(this, () => Resource.Card(this.image[0]));
 
 		Mixins.HoverEvents(this);
 		Mixins.Transition.Transform(this);
@@ -112,8 +112,8 @@ class Deck extends HTMLElement {
 	set image(value) {
 		this._image = value;
 		this._imageElements.forEach((img, index) => {
-			img.src =  URL.Card(value[index] || "");
-			img.style.zIndex = index - value.length;
+			img.src =  Resource.Card(value[index] || "");
+			img.style.zIndex = `${index - value.length}`;
 			img.style.left = `${(index) * 10}px`;
 			img.style.display = value[index] ? "initial" : "none";
 		});
@@ -144,7 +144,7 @@ Deck.CSS = `
 img {
     position: absolute;
 	width: 100px;
-	${CSS.UserSelect("none")}
+	${CSSStyles.UserSelect("none")}
 	transition: transform 200ms ease-in-out
 }
 .flip {
@@ -159,12 +159,12 @@ img {
 async function ShuffleImages(...images) {
 	const randomFlip = (image, index) => index % 2 ? image.classList.add("flip") : image.classList.add("reverseFlip");
 	images.forEach(randomFlip);
-	await sleep(300);
+	await sleep(250);
 	images.forEach((img) => img.classList.remove("flip", "reverseFlip"));
 }
 
 
-/** @type {Object<number, Deck>} */
+/** @type {Object<string, Deck>} */
 Deck.Instances = {};
 
 /** @type {ContextMenu.<Deck>} */
@@ -172,7 +172,7 @@ Deck.ContextMenu = new ContextMenu();
 Deck.ContextMenu
 	.button("Draw", (deck) => deck.draw())
 	.button("Shuffle", (deck) => deck.shuffle())
-	.dataLabel((item, deck) => item.innerText = `Size: ${deck.cardCount || 0}`, ContextMenuStyles.Label())
+	.dataLabel((deck, item) => item.innerText = `Size: ${deck.cardCount || 0}`, ContextMenuStyles.Label())
 	.idLabel()
 ;
 
@@ -180,3 +180,4 @@ customElements.define('deck-element', Deck);
 
 Mixins.MouseEvents(Deck.Instances);
 Mixins.KeyboardEvents(Deck.Instances);
+

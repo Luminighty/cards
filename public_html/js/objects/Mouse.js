@@ -29,4 +29,4 @@ window.addEventListener("load", () => {
 		DB.Mouse.move(Camera.screenToGame(Mouse.screen));
 		//EmitPool.add("mouse move", Camera.screenToGame(Mouse.screen));
 	});
-})
+});

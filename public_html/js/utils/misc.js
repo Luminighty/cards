@@ -1,4 +1,4 @@
-const CSS = {
+const CSSStyles = {
 	UserDrag: (value) => {
 		return `
 		-webkit-user-drag: ${value};

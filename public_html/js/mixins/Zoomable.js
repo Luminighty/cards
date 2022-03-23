@@ -14,7 +14,7 @@ Mixins.Zoomable = (object, src) => {
 		if (e.key == "Tab")
 			ZoomedImage.clear();
 	});
-}
+};
 
 
 const ZoomedImage = {
@@ -45,5 +45,7 @@ const ZoomedImage = {
 		this.elementId = null;
 	},
 	elementId: null,
+	/** @type {HTMLImageElement} */
+	// @ts-ignore
 	element: document.getElementById("zoomed-image")
 };

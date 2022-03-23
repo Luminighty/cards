@@ -33,7 +33,7 @@ const Camera = {
 
 		//console.log(p, r, s);
 
-		const transform = `scale(${s}) rotate(${r}rad) translate(${p.x}px, ${p.y}px)`
+		const transform = `scale(${s}) rotate(${r}rad) translate(${p.x}px, ${p.y}px)`;
 		ElementContainer.style.transform = transform;
 		
 		DB.Camera.transform(this);

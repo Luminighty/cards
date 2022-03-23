@@ -1,27 +1,41 @@
 const Hand = {
 	add(card, position) {
 		//card.style.position = "fixed";
-		card.inHand = true;
 		this.items.splice(position || this.findPositionIndex(card), 0, card);
 		this.sortItems();
 		this.element.appendChild(card);
+		card.rotation = 0;
 	},
 
+	/**
+	 * @param {Card} card 
+	 * @param {boolean} withoutSort 
+	 * @returns 
+	 */
 	remove(card, withoutSort = false) {
 		//card.style.position = "absolute";
 		const index = this.items.findIndex((value) => value.id == card.id);
 		const removed = this.items.splice(index, 1);
 		if (!withoutSort) {
 			this.sortItems();
-			card.inHand = false;
-			ElementContainer.appendChild(card);
-			//screen.x -= card.dragOffset.x || 0;
-			//screen.y -= card.dragOffset.y || 0;
 			const pos = card.position;
-			const rect = this.element.getBoundingClientRect();
-			pos.x += rect.x - Camera.position.x;
-			pos.y += rect.y - Camera.position.y;
-			card.position = pos; //Camera.apply(pos); //Camera.screenToGame(pos);
+			const offset = this.position;
+			const rect = card.getBoundingClientRect();
+
+			const res = Camera.screenToGame({
+				x: pos.x + offset.x + rect.width / 2,
+				y: pos.y + offset.y + rect.height / 2,
+			});
+
+			
+			card.position = {
+				x: res.x - rect.width / 2,
+				y: res.y - rect.height / 2,
+			};
+
+			ElementContainer.appendChild(card);
+
+			card.rotation = -Camera.rotation;
 		}
 		return removed;
 	},
@@ -51,6 +65,10 @@ const Hand = {
 
 	set height(value) {
 		this.element.style.height = `${value}px`;
+	},
+
+	get height() {
+		return parseInt(this.element.style.height) || 0;
 	},
 
 	set width(value) {
@@ -91,6 +109,10 @@ const Hand = {
 
 	element: document.body.appendChild(document.createElement("div")),
 	items: [],
+	get position() {
+		const rect = this.element.getBoundingClientRect();
+		return {x: rect.x, y: rect.y};
+	}
 };
 
 Hand.element.id = "Hand";

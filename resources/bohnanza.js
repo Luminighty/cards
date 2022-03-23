@@ -10,7 +10,7 @@ module.exports = function() {
 		"soy": 12,
 		"stink": 16,
 	};
-	/** @type {import("./GameLoader").CardData[]} */
+	/** @type {CardData[]} */
 	const beanCards = [];
 	for (const bean in beans) {
 		const amount = beans[bean];
@@ -27,13 +27,14 @@ module.exports = function() {
 		back: `bohnanza/field.png`,
 	});
 
-	/** @type {import("./GameLoader").DeckData} */
+	/** @type {DeckData} */
 	const mainDeck = {
 		cards: beanCards,
 		shuffle: true,
 		position: {x: 300, y: 300}
 	};
 
+	/** @type {DeckData} */
 	const fieldDeck = {
 		cards: fields,
 		position: {x: 600, y: 300}
@@ -42,4 +43,4 @@ module.exports = function() {
 		cards: [],
 		decks: [mainDeck, fieldDeck]
 	};
-}
+};

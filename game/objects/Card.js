@@ -1,15 +1,19 @@
 const {id} = require("../../utils/id");
 
 class Card {
+	/**
+	 * @param {CardData} data 
+	 */
 	constructor(data) {
 		this.id = id();
 		this.front = data.front;
 		this.back = data.back;
 		this.flipped = data.flipped || false;
-		this._transform = data.transform || {};
-		this._transform.position = data.position || this._transform.position || Card.Position(this);
-		this._transform.rotation = data.rotation || this._transform.rotation || 0;
-		this._transform.scale = data.scale || this._transform.scale || {x: 1, y: 1};
+		this._transform = {
+			position: data.position || Card.Position(this),
+			rotation: data.rotation || 0,
+			scale: data.scale || {x: 1, y: 1},
+		};
 		this.deck = null;
 		this.playerHand = null;
 	}

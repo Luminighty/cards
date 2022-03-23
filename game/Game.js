@@ -1,4 +1,3 @@
-const { loadCards } = require("../resources/GameLoader");
 const Card = require("./objects/Card");
 const Deck = require("./objects/Deck");
 const Player = require("./Player");
@@ -6,8 +5,8 @@ const Logger = require("../utils/logger");
 
 /**
  * @typedef {Object} SyncArgs
- * @property {Object} extra Extra information to attach
- * @property {string[]} filter Which fields to send
+ * @property {Object=} extra Extra information to attach
+ * @property {string[]=} filter Which fields to send
  */
 
 class Game {
@@ -20,7 +19,7 @@ class Game {
 		this.decks = {};
 	}
 
-	/** @param {import("../resources/GameLoader").GameData} gameData */
+	/** @param {GameData} gameData */
 	setGame(gameData) {
 		if (!gameData) return;
 		this.cards = {};
@@ -32,9 +31,10 @@ class Game {
 		}
 
 		for (const data of gameData.decks) {
-			data.cards = data.cards.map((v) => new Card(v));
-			data.cards.forEach((card) => (this.cards[card.id] = card));
+			const cards = data.cards.map((v) => new Card(v));
+			cards.forEach((card) => (this.cards[card.id] = card));
 			const deck = new Deck(data);
+			deck.addCards(...cards);
 			this.decks[deck.id] = deck;
 			deck.updateImage(this.cards);
 		}
@@ -94,9 +94,9 @@ class Game {
 	}
 
 	/**
-	 * @param {Card} deck 
-	 * @param {Player} sender 
-	 * @param {SyncArgs} extra 
+	 * @param {Card} card 
+	 * @param {Player=} sender 
+	 * @param {SyncArgs=} extra 
 	 */
 	syncCard(card, sender, extra) {
 		this.sync("set card", card, sender, extra);
@@ -104,8 +104,8 @@ class Game {
 
 	/**
 	 * @param {Deck} deck 
-	 * @param {Player} sender 
-	 * @param {SyncArgs} extra 
+	 * @param {Player=} sender 
+	 * @param {SyncArgs=} extra 
 	 */
 	syncDeck(deck, sender, extra) {
 		this.sync("set deck", deck, sender, extra);
@@ -119,8 +119,8 @@ class Game {
 		}
 	}
 
-	broadcast(...data) {
-		for (const player of this.players) player.socket.emit(...data);
+	broadcast(ev, ...data) {
+		for (const player of this.players) player.socket.emit(ev, ...data);
 	}
 
 	/** @param {Deck} deck */

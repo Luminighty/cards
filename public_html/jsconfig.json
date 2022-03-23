@@ -1,0 +1,11 @@
+{
+    "include": [
+        "./js/**/*",
+        "../typedef/public_html/**/*.d.ts",
+        "../typedef/shared/**/*.d.ts"
+    ],
+    "compilerOptions": {
+        "target": "ES6",
+        "checkJs": true,
+    }
+}

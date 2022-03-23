@@ -67,11 +67,11 @@ Mixins.Transform = (object) => {
 		get() {return object._transform;},
 		set(value) {
 			if (value.position != null)
-				object.transform.position = value.position;
+				object.transform._position = value.position;
 			if (value.rotation != null)
-				object.transform.rotation = value.rotation;
+				object.transform._rotation = value.rotation;
 			if (value.scale != null)
-				object.transform.scale = value.scale;
+				object.transform._scale = value.scale;
 			object.transform.update();
 		}
 	});
