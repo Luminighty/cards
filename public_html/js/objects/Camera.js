@@ -56,6 +56,7 @@ const Camera = {
 		maxX: 2000,
 		maxY: 2000,
 	},
+	_rotationSpeed: 1000,
 	_grabbed: false,
 	_rotating: null,
 	_moved: false,
@@ -100,6 +101,17 @@ window.addEventListener("load", () => {
 			Camera._moved = false;
 			Camera._grabbed = Mouse.fromEvent(e);
 		}
+		if (e.button == 1) {
+			e.preventDefault();
+			Camera._rotating = true;
+		}
+	});
+
+	window.addEventListener("mouseup", (e) => {
+		if (e.button == 1) {
+			e.preventDefault();
+			Camera._rotating = false;
+		}
 	});
 	
 	window.addEventListener("contextmenu", (e) => {
@@ -121,6 +133,9 @@ window.addEventListener("load", () => {
 			pos.x = Math.clamp(pos.x + applied.x, Camera.bounds.minX, Camera.bounds.maxX);
 			pos.y = Math.clamp(pos.y + applied.y, Camera.bounds.minY, Camera.bounds.maxY);
 			Camera.position = pos;
+		}
+		if (Camera._rotating) {
+			Camera.rotation -= e.movementX / Camera._rotationSpeed;
 		}
 	});
 	
