@@ -38,6 +38,12 @@ const Rect = {
 
 let sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
+let RotationConstant = Math.PI / 16;
+
+function GetRotate(counterClockwise = false, amount = 1) {
+	return RotationConstant * (counterClockwise ? -1 : 1) * amount;
+}
+
 /**
  * 
  * @param {number} num 

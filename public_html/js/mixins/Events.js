@@ -4,6 +4,7 @@ Mixins.MouseEvents = (objects) => {
 	mixinEvent("contextmenu", objects);
 	mixinEvent("mouseup", objects, false);
 	mixinEvent("mousemove", objects, false);
+	mixinEvent("mousewheel", objects, true);
 };
 
 /** @param {Object} object */

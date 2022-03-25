@@ -25,7 +25,7 @@ Mixins.Transform = (object) => {
 		},
 		get rotation() { return this._rotation; },
 		set rotation(value) {
-			this._rotation = value % (Math.PI * 2);
+			this._rotation = value;// % (Math.PI * 2);
 			this.update();
 		},
 		get scale() { return this._scale; },

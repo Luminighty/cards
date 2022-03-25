@@ -16,6 +16,7 @@ class Deck extends HTMLElement {
 
 		Mixins.HoverEvents(this);
 		Mixins.Transition.Transform(this);
+		Mixins.ZIndexStacked(this, 3);
 	}
 
 	set(deck) {
@@ -55,7 +56,7 @@ class Deck extends HTMLElement {
 			const element = createCard(card);
 			element.take(Hand.items.length);
 			//element.setDrag(drag);
-			element.setZindex();
+			element.setZIndex();
 			this.set(deck);
 		});
 	}
@@ -73,11 +74,24 @@ class Deck extends HTMLElement {
 			const delta = Position.delta(this.dragStart, Mouse);
 			if (delta < 5) {
 				this.drag(e);
+				this.setZIndex();
 				this.dragStart = null;
 			}
 		}, 250);
 	}
 
+	/*
+	set zIndex(value) {
+		this._zIndex = value;
+		this._imageElements.forEach((img, index) => {
+			img.style.zIndex = `${index + value}`;
+		});
+	}
+
+	get zIndex() {
+		return this._zIndex || 0;
+	}
+*/
 	/** @param {MouseEvent} e */
 	mouseup(e) {
 		if (e.button != 0)
@@ -94,7 +108,7 @@ class Deck extends HTMLElement {
 			DB.Deck.draw(this.id, this.dragStart, (card, deck, drag) => {
 				const element = createCard(card);
 				element.setDrag(drag);
-				element.setZindex();
+				element.setZIndex();
 				this.set(deck);
 			});
 			this.dragStart = null;
@@ -108,6 +122,8 @@ class Deck extends HTMLElement {
 	/** @param {MouseEvent} e */
 	contextmenu(e) {
 		e.preventDefault();
+		if (this.grabbed())
+			return;
 		Deck.ContextMenu.open(e, this);
 	}
 

@@ -41,6 +41,7 @@ module.exports = function() {
 	};
 	return {
 		cards: [],
-		decks: [mainDeck, fieldDeck]
+		decks: [mainDeck, fieldDeck],
+		objects: [],
 	};
 };

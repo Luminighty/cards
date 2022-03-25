@@ -47,6 +47,7 @@ class Player {
 			cards: SimplifiedType(this.game.cards, this),
 			decks: SimplifiedType(this.game.decks, this),
 			hands: SimplifiedType(this.game.players.filter((val) => val.id != this.id), this),
+			objects: SimplifiedType(this.game.objects, this),
 		};
 	}
 

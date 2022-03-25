@@ -1,5 +1,6 @@
 const Card = require("./objects/Card");
 const Deck = require("./objects/Deck");
+const GameObject = require("./objects/GameObject");
 const Player = require("./Player");
 const Logger = require("../utils/logger");
 
@@ -17,6 +18,8 @@ class Game {
 		this.cards = {};
 		/** @type {Object<number, Deck>} */
 		this.decks = {};
+		/** @type {Object<number, GameObject>} */
+		this.objects = {};
 	}
 
 	/** @param {GameData} gameData */
@@ -24,6 +27,7 @@ class Game {
 		if (!gameData) return;
 		this.cards = {};
 		this.decks = {};
+		this.objects = {};
 
 		for (const data of gameData.cards) {
 			const card = new Card(data);
@@ -38,8 +42,13 @@ class Game {
 			this.decks[deck.id] = deck;
 			deck.updateImage(this.cards);
 		}
-		this.refresh();
 
+		for (const data of gameData.objects) {
+			const object = new GameObject(data);
+			this.objects[object.id] = object;
+		}
+
+		this.refresh();
 		return this;
 	}
 
@@ -98,8 +107,16 @@ class Game {
 	 * @param {Player=} sender 
 	 * @param {SyncArgs=} extra 
 	 */
-	syncCard(card, sender, extra) {
+	 syncCard(card, sender, extra) {
 		this.sync("set card", card, sender, extra);
+	}
+	/**
+	 * @param {Object} card 
+	 * @param {Player=} sender 
+	 * @param {SyncArgs=} extra 
+	 */
+	syncObject(card, sender, extra) {
+		this.sync("set object", card, sender, extra);
 	}
 
 	/**

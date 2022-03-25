@@ -6,6 +6,7 @@ const Player = require("../game/Player");
 const Logger = require("../utils/logger");
 const CardConnection = require("./Card");
 const DeckConnection = require("./Deck");
+const GameObjectConnection = require("./GameObject");
 const HandConnection = require("./Hand");
 
 
@@ -47,6 +48,7 @@ function Connection(socket) {
 	DeckConnection(socket, player, game);
 	CardConnection(socket, player, game);
 	HandConnection(socket, player, game);
+	GameObjectConnection(socket, player, game);
 
 	socket.emit("set state", player.gamestate);
 }

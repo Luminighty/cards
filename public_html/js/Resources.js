@@ -10,6 +10,7 @@
 
 const Resource = {
 	Card: (value) => value ? `res/${value}` : "",
+	Object: (value) => value ? `res/${value}` : "",
 }
 
 const DB = {
@@ -34,6 +35,12 @@ const DB = {
 			socket.emit("deck addCard", id, cardId, callback),
 		newDeck: (...cardIds) => 
 			socket.emit("deck create", cardIds),
+	},
+	GameObject: {
+		get: (id, callback) =>
+			socket.emit("get object", id, callback),
+		transform: (id, transform, callback) =>
+			EmitPool.add("object transform", id,  transform.data || transform, callback),
 	},
 	/** Cards that the player may hold */
 	Hand: {

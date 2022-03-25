@@ -7,60 +7,44 @@ socket.on("set state", (data) => {
 	setCards(data.cards);
 	setDecks(data.decks);
 	setMouses(data.hands);
+	setObjects(data.objects);
 	Hand.items = [];
 });
 
-socket.on("delete card", (id) => {
-	const card = Card.Instances[id];
-	if (!card) {
-		console.error(`Card not found with ${id}`);
-		return;
-	}
-	card.remove();
-	delete Card.Instances[id];
-});
-socket.on("delete player", (id) => {
-	console.log(`delete ${id}`);
-	const mouse = PlayerMouse.Instances[id];
-	if (!mouse) {
-		console.error(`Mouse not found with ${id}`);
-		return;
-	}
-	mouse.remove();
-	delete PlayerMouse.Instances[id];
-});
-
-socket.on("delete deck", (id) => {
-	const deck = Deck.Instances[id];
-	if (!deck) {
-		console.error(`Deck not found with ${id}`);
-		return;
-	}
-	deck.remove();
-	for(const id in Card.Instances) {
-		const card = Card.Instances[id];
-		if (card.grabbed())
-			card.setZindex();
-	}
-	delete Deck.Instances[id];
-});
 
 const setCards = cards => setElements("card-element", Card.Instances, cards);
 /** @returns {Card} */
 const createCard = card => createElement("card-element", Card.Instances, card);
 onSetElement("card", "card-element", Card.Instances, (card) => {
-	card.setZindex();
+	card.setZIndex();
 });
+onDeleteElement("card", Card.Instances);
 
 const setDecks = decks => setElements("deck-element", Deck.Instances, decks);
 /** @returns {Deck} */
 const createDeck = deck => createElement("deck-element", Deck.Instances, deck);
 onSetElement("deck", "deck-element", Deck.Instances);
+onDeleteElement("deck", Deck.Instances, (deck, id) => {
+	for(const id in Card.Instances) {
+		const card = Card.Instances[id];
+		if (card.grabbed())
+			card.setZIndex();
+	}
+});
+
+
+const setObjects = objects => setElements("game-object", GameObject.Instances, objects);
+/** @returns {GameObject} */
+const createObject = object => createElement("game-object", GameObject.Instances, object);
+onSetElement("object", "game-object", GameObject.Instances);
+onDeleteElement("object", GameObject.Instances);
+
 
 const setMouses = mouses => setElements("player-mouse", PlayerMouse.Instances, mouses);
 onSetElement("player", "player-mouse", PlayerMouse.Instances, (mouse) => {
 	mouse.style.zIndex = 99999;
 });
+onDeleteElement("player", PlayerMouse.Instances);
 
 /**
  * @param {string} type 
@@ -73,9 +57,28 @@ function onSetElement(type, tagName, Instances, callback) {
 		const element = Instances[data.id] || createElement(tagName, Instances, data);
 		element.set(data);
 		if (element.transition)
-			element.transition.transform = `${EmitPool.delay * 2}ms ease-out`;
+			element.transition.transform = `${EmitPool.delay + EmitPool.transitionDelay}ms ease-out`;
 		if (callback)
 			callback(element);
+	});
+}
+
+/**
+ * @param {string} type 
+ * @param {Object<string, Object>} Instances 
+ * @param {(element: Object, id: number) => void=} callback 
+ */
+function onDeleteElement(type, Instances, callback) {
+	socket.on(`delete ${type}`, (id) => {
+		const element = Instances[id];
+		if (!element) {
+			console.error(`${type} not found with ${id}`);
+			return;
+		}
+		if (callback)
+			callback(element, id);
+		element.remove();
+		delete Instances[id];
 	});
 }
 
@@ -99,9 +102,17 @@ function createElement(tagName, Instances, data) {
 }
 
 
+socket.on("set delay", (delay, transitionDelay) => {
+	if (delay != null)
+		EmitPool.delay = delay;
+	if (transitionDelay != null)
+		EmitPool.transitionDelay = transitionDelay;
+});
+
 const EmitPool = {
 	items: {},
 	logging: false,
+	transitionDelay: 100,
 	add(type, ...args) {
 		if (!this.items[type])
 			this.items[type] = [];

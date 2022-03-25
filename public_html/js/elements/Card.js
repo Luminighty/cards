@@ -13,10 +13,12 @@ class Card extends HTMLElement {
 		Mixins.Transform(this);
 		Mixins.Width(this, 100, this._imageElement);
 
-		Mixins.Zoomable(this, () => Resource.Card(this.image));
+		Mixins.Zoomable(this, () => Resource.Object(this.image));
 
 		Mixins.HoverEvents(this);
 		Mixins.Transition.Transform(this);
+
+		Mixins.ZIndexStacked(this);
 	}
 
 	set(card) {
@@ -37,20 +39,30 @@ class Card extends HTMLElement {
 			this.flip();
 	}
 
+	/** @param {KeyboardEvent} e */
 	keydown(e) {
 		if (!this.hovering)
 			return;
+		e.preventDefault();
 		if (e.key == "r") {
-			this.rotation += Math.PI / 16;
-			DB.Card.transform(this.id, this.transform);
+			this.rotate(Math.PI / 16 * (e.ctrlKey ? -1 : 1));
 		}
 	}
 
+	rotate(amount) {
+		this.rotation += amount;
+		DB.Card.transform(this.id, this.transform);
+	}
+
 	async flipAnim(data) {
-		this._imageElement.classList.add("flip");
-		await sleep(100);
-		this.image = data.image || this.image;
-		this._imageElement.classList.remove("flip");
+		const img = new Image();
+		img.onload = async () => {
+			this._imageElement.classList.add("flip");
+			await sleep(100);
+			this.image = data.image || this.image;
+			this._imageElement.classList.remove("flip");
+		};
+		img.src = Resource.Card(data.image);
 	}
 
 	flip() {
@@ -62,24 +74,9 @@ class Card extends HTMLElement {
 		DB.Hand.add(this.id);
 	}
 
-	setZindex() {
-		if (this.zIndex != null && this.zIndex == Card.ZIndexStack.length - 1)
-			return;
-		const index = Card.ZIndexStack.findIndex((val) => val.id == this.id);
-		if (index != -1)
-			Card.ZIndexStack.splice(index, 1);
-		Card.ZIndexStack.push(this);
-		Card.ZIndexStack.forEach((card, index) => {
-			card.zIndex = index;
-		});
-	}
-
-	get zIndex() {
-		return parseInt(this.style.zIndex);
-	}
-
-	set zIndex(value) {
-		this.style.zIndex = `${value}`;
+	/** @param {WheelEvent} e */
+	mousewheel(e) {
+		this.rotate(-Math.PI / 16 * Math.sign(e.deltaY));
 	}
 
 	/** @param {MouseEvent} e */
@@ -88,7 +85,7 @@ class Card extends HTMLElement {
 			return;
 		e.preventDefault();
 		this.drag(e, Hand.contains(this) && Hand.position);
-		this.setZindex();
+		this.setZIndex();
 	}
 
 	/** @param {MouseEvent} e */
@@ -151,6 +148,8 @@ class Card extends HTMLElement {
 	/** @param {MouseEvent} e */
 	contextmenu(e) {
 		e.preventDefault();
+		if (this.grabbed())
+			return;
 		Card.ContextMenu.open(e, this);
 	}
 
@@ -182,7 +181,6 @@ img.flip {
 
 /** @type {Object<string, Card>} */
 Card.Instances = {};
-Card.ZIndexStack = [];
 
 /** @type {ContextMenu.<Card>} */
 Card.ContextMenu = new ContextMenu();
