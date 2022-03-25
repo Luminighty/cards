@@ -45,7 +45,7 @@ class Card extends HTMLElement {
 			return;
 		e.preventDefault();
 		if (e.key == "r") {
-			this.rotate(Math.PI / 16 * (e.ctrlKey ? -1 : 1));
+			this.rotate(GetRotate(e.ctrlKey));
 		}
 	}
 
@@ -75,8 +75,8 @@ class Card extends HTMLElement {
 	}
 
 	/** @param {WheelEvent} e */
-	mousewheel(e) {
-		this.rotate(-Math.PI / 16 * Math.sign(e.deltaY));
+	wheel(e) {
+		this.rotate(GetRotate(e.deltaY < 0));
 	}
 
 	/** @param {MouseEvent} e */

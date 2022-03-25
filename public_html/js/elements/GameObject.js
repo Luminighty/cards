@@ -52,7 +52,7 @@ class GameObject extends HTMLElement {
 	}
 
 	/** @param {WheelEvent} e */
-	mousewheel(e) {
+	wheel(e) {
 		this.rotate(GetRotate(e.deltaY < 0));
 	}
 
