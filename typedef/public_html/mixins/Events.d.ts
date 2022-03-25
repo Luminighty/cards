@@ -1,18 +1,19 @@
 
 interface MouseEvents {
-	mousedown: (MouseEvent) => void,
-	contextmenu: (MouseEvent) => void,
-	mousemove: (MouseEvent) => void,
-	mouseup: (MouseEvent) => void,
+	mousedown: (e: MouseEvent) => void,
+	contextmenu: (e: MouseEvent) => void,
+	mousemove: (e: MouseEvent) => void,
+	mouseup: (e: MouseEvent) => void,
+	wheel: (e: WheelEvent) => void,
 }
 
 interface HoverEvents {
 	hovering: boolean,
-	mouseenter: (MouseEvent) => void,
-	mouseleave: (MouseEvent) => void,
+	mouseenter: (e: MouseEvent) => void,
+	mouseleave: (e: MouseEvent) => void,
 }
 
 interface KeyboardEvents {
-	keyup: (KeyboardEvent) => void,
-	keydown: (KeyboardEvent) => void,
+	keyup: (e: KeyboardEvent) => void,
+	keydown: (e: KeyboardEvent) => void,
 }
