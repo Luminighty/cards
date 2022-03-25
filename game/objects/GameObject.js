@@ -8,6 +8,7 @@ class GameObject {
 	constructor(data) {
 		this.id = id();
 		this.image = data.image;
+		this.width = data.width || 100;
 		this.transform = {
 			position: data.position || {x: 0, y: 0},
 			rotation: data.rotation || 0,
@@ -20,6 +21,7 @@ class GameObject {
 			id: this.id,
 			image: this.image,
 			transform: this.transform,
+			width: this.width,
 		};
 	}
 

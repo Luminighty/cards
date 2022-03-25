@@ -20,6 +20,7 @@ interface DeckData implements Transform {
 }
 
 interface ObjectData implements Transform {
+	width?: number;
 	image: string,
 
 	position?: Vector2,

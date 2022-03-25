@@ -150,6 +150,9 @@ window.addEventListener("load", () => {
 	window.addEventListener("wheel", (e) => {
 		if (DraggedElement)
 			return;
+		const hovering = Array.from(ElementContainer.children).some((element) => element["hovering"]);
+		if (hovering)
+			return;
 		const scale = Camera.scale - Math.sign(e.deltaY) / 10 * Camera.scale
 		Camera.scale = Math.clamp(scale, Camera.scaleBounds.min, Camera.scaleBounds.max);
 	});
