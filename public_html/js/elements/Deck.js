@@ -22,7 +22,7 @@ class Deck extends HTMLElement {
 	}
 
 	set(deck) {
-		this.id = deck.id || this.id;
+		this.id = (deck.id != null) ? deck.id : this.id;
 		this.transform = deck.transform || this.transform;
 		this.cardCount = deck.cardCount || this.cardCount;
 		if (deck.image) this.image = deck.image;
@@ -74,19 +74,7 @@ class Deck extends HTMLElement {
 			}
 		}, 250);
 	}
-
-	/*
-	set zIndex(value) {
-		this._zIndex = value;
-		this._imageElements.forEach((img, index) => {
-			img.style.zIndex = `${index + value}`;
-		});
-	}
-
-	get zIndex() {
-		return this._zIndex || 0;
-	}
-*/
+	
 	/** @param {MouseEvent} e */
 	mouseup(e) {
 		if (e.button != 0) return;
@@ -193,7 +181,8 @@ Deck.Instances = {};
 
 /** @type {ContextMenu.<Deck>} */
 Deck.ContextMenu = new ContextMenu();
-Deck.ContextMenu.button("Draw", (deck) => deck.draw())
+Deck.ContextMenu
+	.button("Draw", (deck) => deck.draw())
 	.button("Shuffle", (deck) => deck.shuffle())
 	.dataLabel(
 		(deck, item) => (item.innerText = `Size: ${deck.cardCount || 0}`),

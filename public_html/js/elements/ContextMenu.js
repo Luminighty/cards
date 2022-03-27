@@ -3,85 +3,105 @@
 class ContextMenu extends HTMLElement {
 	constructor() {
 		super();
-		const [wrapper, _] = Mixins.HTMLElement(this, ContextMenu.HTML, ContextMenu.CSS);
+		const [wrapper, _] = Mixins.HTMLElement(
+			this,
+			ContextMenu.HTML,
+			ContextMenu.CSS
+		);
 		wrapper.classList.add("context-menu");
 		this.wrapper = wrapper;
 		this.context = null;
 		this.onShowCallbacks = [];
-
 
 		document.body.appendChild(this);
 		ContextMenu.Instances.push(this);
 	}
 
 	/**
-	 * @param {string} label 
-	 * @param {ContextMenuItemCallback<ContextType>} onClick 
-	 * @param {ContextMenuItemArgs<ContextType>} args 
+	 * @param {string} label
+	 * @param {ContextMenuItemCallback<ContextType>} onClick
+	 * @param {ContextMenuItemArgs<ContextType>} args
 	 * @returns {ContextMenu.<ContextType>}
 	 */
 	button(label, onClick, args = {}) {
-		return this.item({label, onClick, ...args});
+		return this.item({ label, onClick, ...args });
 	}
 
 	/**
-	 * @param {string} label 
-	 * @param {ContextMenuItemArgs<ContextType>} args 
+	 * @param {string} label
+	 * @param {ContextMenuItemArgs<ContextType>} args
 	 * @returns {ContextMenu.<ContextType>}
 	 */
 	label(label, args = {}) {
-		return this.item({label, ...args});
+		return this.item({ label, ...args });
 	}
 
 	/**
-	 * @param {ContextMenuItemCallback<ContextType>} getData 
-	 * @param {ContextMenuItemArgs<ContextType>} args 
+	 * @param {ContextMenuItemCallback<ContextType>} getData
+	 * @param {ContextMenuItemArgs<ContextType>} args
 	 * @returns {ContextMenu.<ContextType>}
 	 */
 	dataLabel(getData, args = {}) {
-		return this.item({onShow: getData, ...args});
+		return this.item({ onShow: getData, ...args });
 	}
 
 	/**
-	 * @param {ContextMenuItemArgs<ContextType>} args 
+	 * @param {ContextMenuItemCallback<ContextType>} onClick
+	 * @param {ContextMenuItemCallback<ContextType>} onShow
+	 * @param {ContextMenuItemArgs<ContextType>} args
+	 * @returns {ContextMenu.<ContextType>}
+	 */
+	checkbox(label, onClick, onShow, args = {}) {
+		return this.item({
+			html: `<input type="checkbox" disabled><span>${label}</span>`,
+			onClick,
+			onShow: (context, item, e) => {
+				const [checked, label] = onShow(context, item, e);
+				if (label)
+					item.querySelector("span").innerText = label;
+				item.querySelector("input").checked = checked;
+			},
+			...args,
+		});
+	}
+
+	/**
+	 * @param {ContextMenuItemArgs<ContextType>} args
 	 * @returns {ContextMenu.<ContextType>}
 	 */
 	idLabel(args = {}) {
 		return this.dataLabel((context, item) => {
 			item.innerText = `Id: ${context["id"] || 0}`;
-		}, ContextMenuStyles.Label({fontSize: "10px", textAlign: "right", padding: "0px 10px", ...args}));
+		}, ContextMenuStyles.Label({ fontSize: "10px", textAlign: "right", padding: "0px 10px", ...args }));
 	}
 
-	/** 
-	 * @param {ContextMenuItemArgs<ContextType>} data 
+	/**
+	 * @param {ContextMenuItemArgs<ContextType>} data
 	 * @returns {ContextMenu.<ContextType>}
 	 */
 	item(data) {
 		const item = this.wrapper.appendChild(document.createElement("div"));
-		item.innerText = data.label || "";
+		item.innerHTML = data.html || data.label || "";
 		item.classList.add("item");
 
-		ContextMenu.Args.Class
-			.filter((val) => data[val])
-			.forEach((val) => item.classList.add(val));
+		ContextMenu.Args.Class.filter((val) => data[val]).forEach((val) =>
+			item.classList.add(val)
+		);
 
-			
-		ContextMenu.Args.Style
-			.filter((val) => data[val])
-			.forEach((val) => item.style[val] = data[val]);
+		ContextMenu.Args.Style.filter((val) => data[val]).forEach(
+			(val) => (item.style[val] = data[val])
+		);
 
 		item.style.color = data.color || "";
 		item.style.backgroundColor = data.backgroundColor || "";
 		if (data.onClick) {
 			item.addEventListener("click", (e) => {
 				data.onClick(this.context, item, e);
-				if (!data.keepOpenAfterClick)
-					this.close();
+				if (!data.keepOpenAfterClick) this.close();
 			});
 			item.classList.add("button");
 		}
-		if (data.onShow)
-			this.onShowCallbacks.push([item, data.onShow]);
+		if (data.onShow) this.onShowCallbacks.push([item, data.onShow]);
 
 		return this;
 	}
@@ -91,9 +111,8 @@ class ContextMenu extends HTMLElement {
 	}
 
 	open(e, context) {
-		for (const [item, cb] of this.onShowCallbacks)
-			cb(context, item, e);
-		const {clientX: x, clientY: y} = e;
+		for (const [item, cb] of this.onShowCallbacks) cb(context, item, e);
+		const { clientX: x, clientY: y } = e;
 		this.wrapper.style.left = `${x}px`;
 		this.wrapper.style.top = `${y}px`;
 		this.wrapper.classList.add("visible");
@@ -107,7 +126,6 @@ class ContextMenu extends HTMLElement {
 	getBoundingClientRect() {
 		return this.wrapper.getBoundingClientRect();
 	}
-
 }
 
 ContextMenu.Args = {};
@@ -136,6 +154,9 @@ ContextMenu.CSS = `
 .context-menu.visible {
 	transform: scale(1);
 	transition: transform 150ms ease-in-out;
+}
+.item input[type="checkbox"] {
+	
 }
 
 .context-menu .item {

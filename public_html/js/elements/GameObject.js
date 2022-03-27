@@ -16,7 +16,7 @@ class GameObject extends HTMLElement {
 	}
 
 	set(object) {
-		this.id = object.id || this.id;
+		this.id = (object.id != null) ? object.id : this.id;
 		this.transform = object.transform || this.transform;
 		this.image = object.image || this.image;
 		this.width = object.width || this.width;

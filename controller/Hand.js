@@ -2,11 +2,7 @@ const { Socket } = require("socket.io");
 const Game = require("../game/Game");
 const Player = require("../game/Player");
 
-/**
- * @param {Socket} socket 
- * @param {Player} player
- * @param {Game} game
- */
+/** @type {ConnectionCallback} */
 function HandConnection(socket, player, game) {
 	socket.on("hand add", (id, callback) => {
 		const card = game.cards[id];

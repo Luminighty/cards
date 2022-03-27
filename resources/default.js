@@ -11,9 +11,9 @@ module.exports = function() {
 
 	const objs = {
 		"zipchip_red": [1, 100, 100],
-		"zipchip_green": [1, 300, 100],
-		"zipchip_blue": [1, 500, 100],
-		"zipchip_black": [1, 700, 100],
+		"zipchip_green": [1, 140, 100],
+		"zipchip_blue": [1, 180, 100],
+		"zipchip_black": [1, 220, 100],
 	};
 
 	const objects = Object.entries(objs)
@@ -26,12 +26,19 @@ module.exports = function() {
 					)
 				);
 
+	/** @type {DiceData} */
+	const dice = {
+		image: [...Array(6).keys()].map((value) => `white/side_${value+1}.png`),
+		position: {x: 150, y: 300},
+		width: 50,
+	};
+
 	return {
-		cards: [],
 		decks: [{
 			cards, 
 			position: {x: 300, y: 300},
 		}],
-		objects
+		objects,
+		dices: [dice],
 	};
 };

@@ -3,6 +3,7 @@ const Deck = require("./objects/Deck");
 const GameObject = require("./objects/GameObject");
 const Player = require("./Player");
 const Logger = require("../utils/logger");
+const Dice = require("./objects/Dice");
 
 /**
  * @typedef {Object} SyncArgs
@@ -28,6 +29,12 @@ class Game {
 		this.cards = {};
 		this.decks = {};
 		this.objects = {};
+		this.dices = {};
+
+		gameData.cards = gameData.cards || [];
+		gameData.decks = gameData.decks || [];
+		gameData.objects = gameData.objects || [];
+		gameData.dices = gameData.dices || [];
 
 		for (const data of gameData.cards) {
 			const card = new Card(data);
@@ -46,6 +53,11 @@ class Game {
 		for (const data of gameData.objects) {
 			const object = new GameObject(data);
 			this.objects[object.id] = object;
+		}
+
+		for (const data of gameData.dices) {
+			const dice = new Dice(data);
+			this.dices[dice.id] = dice;
 		}
 
 		this.refresh();

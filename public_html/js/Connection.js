@@ -8,10 +8,14 @@ socket.on("set state", (data) => {
 	setDecks(data.decks);
 	setMouses(data.hands);
 	setObjects(data.objects);
+	setDices(data.dices);
 	Hand.items = [];
 });
 
 
+// ////////////////
+//      CARDS
+// ///////////////
 const setCards = cards => setElements("card-element", Card.Instances, cards);
 /** @returns {Card} */
 const createCard = card => createElement("card-element", Card.Instances, card);
@@ -20,6 +24,10 @@ onSetElement("card", "card-element", Card.Instances, (card) => {
 });
 onDeleteElement("card", Card.Instances);
 
+
+// ////////////////
+//      DECKS
+// ///////////////
 const setDecks = decks => setElements("deck-element", Deck.Instances, decks);
 /** @returns {Deck} */
 const createDeck = deck => createElement("deck-element", Deck.Instances, deck);
@@ -33,6 +41,9 @@ onDeleteElement("deck", Deck.Instances, (deck, id) => {
 });
 
 
+// ////////////////
+//      OBJECTS
+// ///////////////
 const setObjects = objects => setElements("game-object", GameObject.Instances, objects);
 /** @returns {GameObject} */
 const createObject = object => createElement("game-object", GameObject.Instances, object);
@@ -40,11 +51,25 @@ onSetElement("object", "game-object", GameObject.Instances);
 onDeleteElement("object", GameObject.Instances);
 
 
+// ////////////////
+//      MOUSES
+// ///////////////
 const setMouses = mouses => setElements("player-mouse", PlayerMouse.Instances, mouses);
 onSetElement("player", "player-mouse", PlayerMouse.Instances, (mouse) => {
 	mouse.style.zIndex = 99999;
 });
 onDeleteElement("player", PlayerMouse.Instances);
+
+
+// ////////////////
+//      DICES
+// ///////////////
+const setDices = dices => setElements("dice-element", Dice.Instances, dices);
+/** @returns {Dice} */
+const createDice = dice => createElement("dice-element", Dice.Instances, dice);
+onSetElement("dice", "dice-element", Dice.Instances);
+onDeleteElement("dice", Dice.Instances);
+
 
 /**
  * @param {string} type 

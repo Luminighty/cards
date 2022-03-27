@@ -28,8 +28,19 @@ interface ObjectData implements Transform {
 	scale?: Vector2;
 }
 
+interface DiceData implements Transform {
+	image: string[],
+	
+	width?: number;
+
+	position?: Vector2,
+	rotation?: number;
+	scale?: Vector2;
+}
+
 interface GameData {
 	cards: CardData[],
 	decks: DeckData[],
 	objects: ObjectData[],
+	dices: DiceData[],
 }

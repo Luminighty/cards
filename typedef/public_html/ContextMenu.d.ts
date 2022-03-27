@@ -1,5 +1,6 @@
 interface ContextMenuItemArgs<Context extends any> {
 	label?: string,
+	html?: string,
 
 	keepOpenAfterClick?: boolean,
 	bold?: boolean,
@@ -24,4 +25,4 @@ interface ContextMenuItemArgs<Context extends any> {
 type ContextMenuAttribute = "keepOpenAfterClick" | "bold" | "italic" | "strikethrough" | "underline";
 
 type ContextMenuItemCallback<Context> =
-	(context: Context, item: HTMLDivElement, e: MouseEvent) => void;
+	(context: Context, item: HTMLDivElement, e: MouseEvent) => any;
