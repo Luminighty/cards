@@ -35,7 +35,7 @@ async function getOauthData(code) {
 				client_secret: process.env["DISCORD_CLIENT_KEY"],
 				code,
 				grant_type: 'authorization_code',
-				redirect_uri: `http://${process.env["HOST"]}:${process.env["PORT"] || 5000}`,
+				redirect_uri: `${process.env["HOST"]}:${process.env["PORT"] || 5000}`,
 				scope: 'identify',
 			}),
 			headers: {
