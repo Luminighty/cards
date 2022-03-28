@@ -25,11 +25,20 @@ function CreateObjectAction(type, syncEvent) {
 
 function AddTransformEvent(socket, event, game, player, ObjectAction) {
 	socket.on(event, (id, transform, callback) => {
-		ObjectAction(game, player, callback, id, (card) => {
-			card.transform = transform;
+		ObjectAction(game, player, callback, id, (object) => {
+			object.transform = transform;
 			return { filter: ["id", "transform"] };
 		});
 	});
 }
 
-module.exports = {CreateObjectAction, AddTransformEvent};
+function AddLockEvent(socket, event, game, player, ObjectAction) {
+	socket.on(event, (id, locked, callback) => {
+		ObjectAction(game, player, callback, id, (object) => {
+			object.locked = locked;
+			return { filter: ["id", "locked"] };
+		});
+	});
+}
+
+module.exports = {CreateObjectAction, AddTransformEvent, AddLockEvent};

@@ -5,6 +5,7 @@ class Deck extends HTMLElement {
 
 		/** @type {HTMLImageElement[]} */
 		this._imageElements = Array.from(wrapper.querySelectorAll("img"));
+		this._locked = false;
 
 		this._imageElements.forEach((img) =>
 			img.addEventListener("load", this.onImageload.bind(this))
@@ -27,7 +28,16 @@ class Deck extends HTMLElement {
 		this.cardCount = deck.cardCount || this.cardCount;
 		if (deck.image) this.image = deck.image;
 		if (deck.shuffle) ShuffleImages(...this._imageElements);
+		if (deck.locked != null)
+			this._locked = deck.locked;
 	}
+
+	lock() {
+		this._locked = !this._locked;
+		DB.Deck.lock(this.id, this._locked);
+	}
+
+	get locked() { return this._locked; }
 
 	/** @param {KeyboardEvent} e */
 	keyup(e) {
@@ -184,6 +194,7 @@ Deck.ContextMenu = new ContextMenu();
 Deck.ContextMenu
 	.button("Draw", (deck) => deck.draw())
 	.button("Shuffle", (deck) => deck.shuffle())
+	.checkbox("Lock", (deck) => deck.lock(), (deck) => [deck.locked])
 	.dataLabel(
 		(deck, item) => (item.innerText = `Size: ${deck.cardCount || 0}`),
 		ContextMenuStyles.Label()

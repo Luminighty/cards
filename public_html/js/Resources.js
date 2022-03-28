@@ -22,8 +22,8 @@ const DB = {
 			socket.emit("card flip", id, callback),
 		transform: (id, transform, callback) =>
 			EmitPool.add("card transform", id, transform.data || transform, callback),
-		lock: (id, callback) =>
-			socket.emit("card lock", id, callback),
+		lock: (id, locked, callback) =>
+			socket.emit("card lock", id, locked, callback),
 	},
 	Deck: {
 		get: (id, callback) =>
@@ -38,16 +38,16 @@ const DB = {
 			socket.emit("deck addCard", id, cardId, callback),
 		newDeck: (...cardIds) => 
 			socket.emit("deck create", cardIds),
-		lock: (id, callback) =>
-			socket.emit("deck lock", id, callback),
+		lock: (id, locked, callback) =>
+			socket.emit("deck lock", id, locked, callback),
 	},
 	GameObject: {
 		get: (id, callback) =>
 			socket.emit("get object", id, callback),
 		transform: (id, transform, callback) =>
 			EmitPool.add("object transform", id, transform.data || transform, callback),
-		lock: (id, callback) =>
-			socket.emit("object lock", id, callback),
+		lock: (id, locked, callback) =>
+			socket.emit("object lock", id, locked, callback),
 	},
 	Dice: {
 		get: (id, callback) =>
@@ -56,8 +56,10 @@ const DB = {
 			EmitPool.add("dice transform", id, transform.data || transform, callback),
 		roll: (id, callback) =>
 			socket.emit("dice roll", id, callback),
-		lock: (id, callback) =>
-			socket.emit("dice lock", id, callback),
+		set: (id, side, callback) =>
+			socket.emit("dice set", id, side, callback),
+		lock: (id, locked, callback) =>
+			socket.emit("dice lock", id, locked, callback),
 	},
 	/** Cards that the player may hold */
 	Hand: {

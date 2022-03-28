@@ -21,12 +21,32 @@ class Player {
 			rotation: 0,
 			scale: 1,
 		};
-		this.name = "";
-		this.color = `${Math.floor(Math.random()*360)}`;
+		this.username = "";
+		this.color = "";
+		this.discriminator = "";
+		this.avatar = "";
+		this.discordId = "";
 	}
 
 	set(data) {
-		this.name = data.name || this.name;
+		if (!data)
+			return;
+		this.username = data.username || this.username;
+		this.discordId = data.id || this.discordId;
+		this.discriminator = data.discriminator || this.discriminator;
+		this.avatar = data.avatar || this.avatar;
+		this.color = data.accent_color.toString("16") || this.color;
+	}
+
+	simplified(player) {
+		return {
+			id: this.id,
+			mouse: this.mouse,
+			username: this.username,
+			discriminator: this.discriminator,
+			color: this.color,
+			camera: this.camera,
+		};
 	}
 
 	join(game) {
@@ -60,15 +80,6 @@ class Player {
 		this.socket.emit(ev, ...args);
 	}
 
-	simplified(player) {
-		return {
-			id: this.id,
-			mouse: this.mouse,
-			name: this.name,
-			color: this.color,
-			camera: this.camera,
-		};
-	}
 }
 
 

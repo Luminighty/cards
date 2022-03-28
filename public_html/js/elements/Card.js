@@ -8,6 +8,7 @@ class Card extends HTMLElement {
 		const [wrapper, _] = Mixins.HTMLElement(this, Card.HTML, Card.CSS);
 		
 		this._imageElement = /** @type {HTMLImageElement} */ (wrapper.firstElementChild);
+		this._locked = false;
 
 		Mixins.Draggable(this);
 		Mixins.Transform(this);
@@ -21,6 +22,13 @@ class Card extends HTMLElement {
 		Mixins.ZIndexStacked(this);
 	}
 
+	lock() {
+		this._locked = !this._locked;
+		DB.Card.lock(this.id, this._locked);
+	}
+
+	get locked() { return this._locked; }
+
 	set(card) {
 		this.id = (card.id != null) ? card.id : this.id;
 		this.transform = card.transform || this.transform;
@@ -29,6 +37,8 @@ class Card extends HTMLElement {
 		} else {
 			this.image = card.image || this.image;
 		}
+		if (card.locked != null)
+			this._locked = card.locked;
 	}
 
 	/** @param {KeyboardEvent} e */
@@ -189,6 +199,7 @@ Card.ContextMenu
 	.button("Take", (card) => card.take(), {onShow: (card, item) => {
 		item.style.display = Hand.contains(card) ? "none" : "";
 	}})
+	.checkbox("Lock", (card) => card.lock(), (card) => [card.locked])
 	.idLabel()
 ;
 

@@ -11,6 +11,9 @@ const DraggableMixin = {
 		this.setDrag(offset);
 	},
 	setDrag(offset) {
+		if (Camera._grabbed || Camera._rotating || this.locked)
+			return;
+
 		const pos = this.position;
 		if (this.width != null) 
 			this.width += 4;

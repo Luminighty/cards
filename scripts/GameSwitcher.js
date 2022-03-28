@@ -1,3 +1,4 @@
+// @ts-nocheck
 const prompts = require('prompts');
 const request = require("request");
 require('dotenv').config();

@@ -5,6 +5,7 @@ class Dice extends HTMLElement {
 
 		this.container = /** @type {HTMLDivElement} */ (wrapper.firstElementChild);
 		this.dice = /** @type {HTMLDivElement} */ (this.container.firstElementChild);
+		this._locked = false;
 
 		Mixins.Transform(this);
 		Mixins.Draggable(this);
@@ -13,6 +14,12 @@ class Dice extends HTMLElement {
 		Mixins.Transition.Transform(this);
 		
 		Mixins.ZIndexStacked(this);
+		this._side = {index: 0};
+	}
+
+	lock() {
+		this._locked = !this._locked;
+		DB.Dice.lock(this.id, this._locked);
 	}
 
 	get locked() {
@@ -30,21 +37,24 @@ class Dice extends HTMLElement {
 			this.image = dice.image;
 		if (dice.side)
 			this.side = dice.side;
+		if (dice.locked != null)
+			this.locked = dice.locked;
 	}
 
-	/** @param {{index: number, x: number, y: number}} value */
+	/** @param {{index: number, x?: number, y?: number}} value */
 	set side(value) {
-		const delta = (this._side) ? Position.delta(value, this._side) : 0;
-		this._side = value;
-		value.x = value.x || 0;
-		value.y = value.y || 0;
+		const delta = (this._side.x != null && this._side.y != null) ? Position.delta(value, this._side) : 0;
+		value.x = value.x || this._side.x || 0;
+		value.y = value.y || this._side.y || 0;
 		
 		const rotation = this.image[value.index].rotation || {x: 0, y: 0};
 		const x = rotation.x + value.x * Math.PI * 2;
 		const y = rotation.y + value.y * Math.PI * 2;
 		
-		this.dice.style.transition = `transform ${delta * 300}ms`;
-		this.dice.style.transform = `rotateX(${x}rad) rotateY(${y}rad)`;
+		this.dice.style.transition = `transform ${(delta+1) * 200}ms`;
+		this.dice.style.transform = `rotateX(${-x}rad) rotateY(${-y}rad)`;
+
+		this._side = value;
 	}
 
 	get side() {
@@ -58,6 +68,15 @@ class Dice extends HTMLElement {
 			return;
 		if (e.key == "r") 
 			this.roll();
+		if (this.sideKeys.includes(e.key)) {
+			const index = parseInt(e.key) - 1;
+			this.side = {index};
+			DB.Dice.set(this.id, index);
+		}
+	}
+
+	get sideKeys() {
+		return [...Array(this.image.length)].map((_, i) => `${i+1}`);
 	}
 
 	roll() {
@@ -151,5 +170,5 @@ Mixins.KeyboardEvents(Dice.Instances);
 Dice.ContextMenu = new ContextMenu();
 Dice.ContextMenu
 	.button("Roll", (dice) => dice.roll())
-	.checkbox("Lock", (dice) => dice.locked = !dice.locked, (dice) => [dice.locked, dice.locked ? "Unlock" : "Lock"])
+	.checkbox("Lock", (dice) => dice.lock(), (dice) => [dice.locked])
 	.idLabel();

@@ -6,13 +6,19 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "game": "node GameSwitcher.js"
+    "game": "node scripts/GameSwitcher.js",
+    "seed": "node scripts/db.js",
+    "db": "node scripts/db_browser.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cookie": "^0.4.2",
+    "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
+    "node-fetch": "^2.6.7",
+    "pg": "^8.7.3",
     "prompts": "^2.4.2",
     "request": "^2.88.2",
     "socket.io": "^4.4.1"

@@ -1,6 +1,3 @@
-const { Socket } = require("socket.io");
-const Game = require("../game/Game");
-const Player = require("../game/Player");
 
 /** @type {ConnectionCallback} */
 function HandConnection(socket, player, game) {

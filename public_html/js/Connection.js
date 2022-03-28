@@ -55,8 +55,9 @@ onDeleteElement("object", GameObject.Instances);
 //      MOUSES
 // ///////////////
 const setMouses = mouses => setElements("player-mouse", PlayerMouse.Instances, mouses);
-onSetElement("player", "player-mouse", PlayerMouse.Instances, (mouse) => {
+onSetElement("player", "player-mouse", PlayerMouse.Instances, (mouse, data) => {
 	mouse.style.zIndex = 99999;
+	//console.log(data);
 });
 onDeleteElement("player", PlayerMouse.Instances);
 
@@ -75,7 +76,7 @@ onDeleteElement("dice", Dice.Instances);
  * @param {string} type 
  * @param {string} tagName 
  * @param {Object<string, Object>} Instances 
- * @param {(element: Object) => void=} callback 
+ * @param {(element: Object, data: Object) => void=} callback 
  */
 function onSetElement(type, tagName, Instances, callback) {
 	socket.on(`set ${type}`, (data) => {
@@ -84,7 +85,7 @@ function onSetElement(type, tagName, Instances, callback) {
 		if (element.transition)
 			element.transition.transform = `${EmitPool.delay + EmitPool.transitionDelay}ms ease-out`;
 		if (callback)
-			callback(element);
+			callback(element, data);
 	});
 }
 

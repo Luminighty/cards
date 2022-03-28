@@ -20,6 +20,7 @@ class Deck {
 		this.image = [];
 		if (data.shuffle)
 			this.shuffle();
+		this.locked = false;
 	}
 
 	/** 
@@ -65,6 +66,7 @@ class Deck {
 			image: this.image,
 			transform: this.transform,
 			cardCount: this.cards.length,
+			locked: this.locked,
 		};
 	}
 

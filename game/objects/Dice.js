@@ -13,6 +13,7 @@ class Dice {
 			scale: data.scale || {x: 1, y: 1},
 		};
 		this.side = { x: 0, y: 0, index: 0, };
+		this.locked = false;
 	}
 
 	simplified(player) {
@@ -21,6 +22,7 @@ class Dice {
 			image: this.image,
 			transform: this.transform,
 			side: this.side,
+			locked: this.locked,
 		};
 	}
 

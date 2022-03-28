@@ -5,6 +5,7 @@ class GameObject extends HTMLElement {
 		const [wrapper, _] = Mixins.HTMLElement(this, GameObject.HTML, GameObject.CSS);
 	
 		this._imageElement = /** @type {HTMLImageElement} */ (wrapper.firstElementChild);
+		this._locked = false;
 
 		Mixins.Draggable(this);
 		Mixins.Transform(this);
@@ -20,10 +21,26 @@ class GameObject extends HTMLElement {
 		this.transform = object.transform || this.transform;
 		this.image = object.image || this.image;
 		this.width = object.width || this.width;
+		if (object.locked != null)
+			this._locked = object.locked;
 	}
+
+	lock() {
+		this._locked = !this._locked;
+		DB.GameObject.lock(this.id, this._locked);
+	}
+
+	get locked() { return this._locked; }
 
 	mouseup(e) {
 		this.drop(e);
+	}
+
+	/** @param {MouseEvent} e */
+	contextmenu(e) {
+		e.preventDefault();
+		if (this.grabbed()) return;
+		GameObject.ContextMenu.open(e, this);
 	}
 
 	mousedown(e) {
@@ -85,6 +102,12 @@ img {
 
 /** @type {Object<string, GameObject>} */
 GameObject.Instances = {};
+
+/** @type {ContextMenu.<GameObject>} */
+GameObject.ContextMenu = new ContextMenu();
+GameObject.ContextMenu
+	.checkbox("Lock", (object) => object.lock(), (object) => [object.locked])
+	.idLabel();
 
 customElements.define('game-object', GameObject);
 Mixins.MouseEvents(GameObject.Instances);

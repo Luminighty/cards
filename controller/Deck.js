@@ -1,14 +1,12 @@
-const { Socket } = require("socket.io");
-const Game = require("../game/Game");
 const Deck = require("../game/objects/Deck");
-const Player = require("../game/Player");
-const {CreateObjectAction, AddTransformEvent} = require("./Action");
+const {CreateObjectAction, AddTransformEvent, AddLockEvent} = require("./Action");
 
 
 /** @type {ConnectionCallback} */
 function DeckConnection(socket, player, game) {
 	
 	AddTransformEvent(socket, "deck transform", game, player, DeckAction);
+	AddLockEvent(socket, "deck lock", game, player, DeckAction);
 
 	socket.on("deck shuffle", (id, callback) => {
 		DeckAction(game, player, callback, id, (deck) => {
@@ -34,7 +32,7 @@ function DeckConnection(socket, player, game) {
 		});
 	});
 
-	socket.on("deck create", (cardIds, callback) => {
+	socket.on("deck create", (cardIds) => {
 		const cards = cardIds.map((id) => game.cards[id]);
 		const deck = new Deck();
 		deck.addCards(...cards);

@@ -14,6 +14,7 @@ class GameObject {
 			rotation: data.rotation || 0,
 			scale: data.scale || {x: 1, y: 1},
 		};
+		this.locked = false;
 	}
 
 	simplified(player) {
@@ -22,6 +23,7 @@ class GameObject {
 			image: this.image,
 			transform: this.transform,
 			width: this.width,
+			locked: this.locked,
 		};
 	}
 

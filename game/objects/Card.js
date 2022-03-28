@@ -16,6 +16,7 @@ class Card {
 		};
 		this.deck = null;
 		this.playerHand = null;
+		this.locked = false;
 	}
 
 	get image() {
@@ -31,6 +32,7 @@ class Card {
 			id: this.id,
 			image: this.image,
 			transform: this.playerHand == null ? this.transform : null,
+			locked: this.locked,
 		};
 	}
 

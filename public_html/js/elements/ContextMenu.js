@@ -53,7 +53,7 @@ class ContextMenu extends HTMLElement {
 	 */
 	checkbox(label, onClick, onShow, args = {}) {
 		return this.item({
-			html: `<input type="checkbox" disabled><span>${label}</span>`,
+			html: `<input type="checkbox"><span>${label}</span>`,
 			onClick,
 			onShow: (context, item, e) => {
 				const [checked, label] = onShow(context, item, e);
@@ -156,9 +156,17 @@ ContextMenu.CSS = `
 	transition: transform 150ms ease-in-out;
 }
 .item input[type="checkbox"] {
-	
+    appearance: none;
+    border: 2px solid #ffffff;
+    border-radius: 3px;
+    margin: auto 5px auto 0px;
+    padding: 6px;
+    pointer-events: none;
+    vertical-align: text-top;
 }
-
+.item input:checked {
+	background-image: url(media/check.png);
+}
 .context-menu .item {
 	padding: 8px 10px;
 	font-size: 15px;

@@ -12,13 +12,14 @@ class PlayerMouse extends HTMLElement {
 	set(data) {
 		this.id = data.id;
 		this.name = data.name || this.name;
-		if (data.color)
-			this.color = data.color;
+		//if (data.color)
+		//	this.color = data.color;
 
 		if (data.mouse) {
 			this.position = data.mouse.position;
 			this.rotation = data.mouse.rotation;
 		}
+		this.span.style.backgroundImage = `url("avatar/${this.id}")`;
 	}
 
 
@@ -39,13 +40,13 @@ PlayerMouse.HTML = `<span></span>`;
 PlayerMouse.CSS = `
 span {
 	position: absolute;
-    background: url("img/cursor.png");
-	width: 20px;
-	height: 20px;
-    overflow: hidden;
-    background-repeat: no-repeat;
+    background-repeat: round;
+    border-radius: 1000px;
+    width: 32px;
+    height: 32px;
 	z-index: 999999;
 	transition: transform 500ms ease-in-out;
+    transform: translate(-5px, -5px);
 }
 `;
 
