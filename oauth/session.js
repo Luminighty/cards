@@ -21,7 +21,6 @@ Session.load = async () => {
 		refresh_token: session.refresh_token,
 		expires: parseInt(session.expires),
 	}));
-	console.log(sessionCache);
 };
 
 Session.find = async (id) => {
@@ -30,7 +29,8 @@ Session.find = async (id) => {
 
 Session.create = async (token, type, refresh, expires) => {
 	const id = generateSessionId();
-	expires = Date.now() + expires * 1000;
+	expires = Date.now() + (expires || 604800) * 1000;
+	console.log("Inserting: ", id, token, type, refresh, expires);
 	await pool.query("INSERT INTO SESSIONS VALUES ($1, $2, $3, $4, $5)", [id, token, type, refresh, expires]);
 	sessionCache.push({id, token, expires});
 	return [id, expires];
