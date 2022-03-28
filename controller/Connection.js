@@ -35,7 +35,10 @@ function Connection(socket) {
 	.then(() => {
 		game.sync("set player", player, player);
 	})
-	.catch(console.error);
+	.catch((err) => {
+		console.error(sessionId);
+		console.error(err);
+	});
 
 
 	socket.on('disconnect', () => {

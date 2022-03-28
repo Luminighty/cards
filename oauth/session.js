@@ -27,12 +27,12 @@ Session.find = async (id) => {
 	return sessionCache.find((session) => session.id == id && session.expires > Date.now());
 };
 
-Session.create = async (token, type, refresh, expires) => {
+Session.create = async (access_token, type, refresh_token, expires) => {
 	const id = generateSessionId();
 	expires = Date.now() + (expires || 604800) * 1000;
-	console.log("Inserting: ", id, token, type, refresh, expires);
-	await pool.query("INSERT INTO SESSIONS VALUES ($1, $2, $3, $4, $5)", [id, token, type, refresh, expires]);
-	sessionCache.push({id, token, expires});
+	console.log("Inserting: ", id, access_token, type, refresh_token, expires);
+	await pool.query("INSERT INTO SESSIONS VALUES ($1, $2, $3, $4, $5)", [id, access_token, type, refresh_token, expires]);
+	sessionCache.push({id, access_token, type, refresh_token, expires});
 	return [id, expires];
 };
 

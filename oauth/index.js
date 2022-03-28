@@ -27,6 +27,8 @@ discordAuth.use(async (req, res, next) => {
 
 async function getOauthData(code) {
 	try {
+		const redirect_uri = `${process.env["HOST"]}:${process.env["PORT"] || 5000}`;
+		console.log("Redirect URI", redirect_uri);
 		// @ts-ignore
 		const oauthResult = await fetch("https://discord.com/api/oauth2/token", {
 			method: "POST",
@@ -35,7 +37,7 @@ async function getOauthData(code) {
 				client_secret: process.env["DISCORD_CLIENT_KEY"],
 				code,
 				grant_type: 'authorization_code',
-				redirect_uri: `${process.env["HOST"]}:${process.env["PORT"] || 5000}`,
+				redirect_uri,
 				scope: 'identify',
 			}),
 			headers: {
