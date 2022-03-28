@@ -27,7 +27,7 @@ discordAuth.use(async (req, res, next) => {
 
 async function getOauthData(code) {
 	try {
-		const redirect_uri = `${process.env["HOST"]}:${process.env["PORT"] || 5000}`;
+		const redirect_uri = `${process.env["HOST"]}`;
 		console.log("Redirect URI", redirect_uri);
 		// @ts-ignore
 		const oauthResult = await fetch("https://discord.com/api/oauth2/token", {
