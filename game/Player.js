@@ -35,7 +35,8 @@ class Player {
 		this.discordId = data.id || this.discordId;
 		this.discriminator = data.discriminator || this.discriminator;
 		this.avatar = data.avatar || this.avatar;
-		this.color = data.accent_color.toString("16") || this.color;
+		if (data.accent_color)
+			this.color = data.accent_color.toString("16");
 	}
 
 	simplified(player) {

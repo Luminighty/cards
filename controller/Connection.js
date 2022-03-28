@@ -99,7 +99,12 @@ function GetUserData(session) {
 	return fetch("https://discord.com/api/users/@me", {headers: {
 		authorization: `${session.type} ${session.access_token}`
 	}})
-	.then((result) => result.json());
+	.then((result) => result.json())
+	.then((res) => {
+		if (res.code != null)
+			throw res;
+		return res;
+	});
 }
 
 module.exports = Connection;
