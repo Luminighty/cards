@@ -6,9 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "game": "node scripts/GameSwitcher.js",
-    "seed": "node scripts/db.js",
-    "db": "node scripts/db_browser.js"
+    "game": "node src/scripts/GameSwitcher.js",
+    "seed": "node src/scripts/db.js",
+    "db": "node src/scripts/db_browser.js"
   },
   "author": "",
   "license": "ISC",

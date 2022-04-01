@@ -2,9 +2,9 @@ require('dotenv').config();
 const path = require("path");
 const express = require("express");
 const app = express();
-const Game = require("./game/Game");
+const Game = require("./src/game/Game");
 const { LoadGame, Games } = require("./resources/GameLoader");
-const { discordAuth } = require('./oauth');
+const { discordAuth } = require('./src/oauth');
 const cookieParser = require("cookie-parser");
 
 app.use(cookieParser(process.env["COOKIE_SIGNATURE"]));

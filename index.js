@@ -2,10 +2,10 @@ require('dotenv').config();
 const http = require("http");
 const { Server } = require("socket.io");
 
-const Connection = require("./controller/Connection");
+const Connection = require("./src/controller/Connection");
 const { Games } = require("./resources/GameLoader");
 const { SetGame, app } = require('./app');
-const Session = require('./oauth/session');
+const Session = require('./src/oauth/session');
 
 const server = http.createServer(app);
 const io = new Server(server);
