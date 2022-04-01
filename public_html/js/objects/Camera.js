@@ -98,7 +98,14 @@ const Camera = {
 			//Matrix3.scale(-this.scale, -this.scale),
 			vec
 		).xy;
-	}
+	},
+
+	reset() {
+		Camera._.position = {x: 0, y: 0};
+		Camera._.rotation = 0;
+		Camera._.scale = 1;
+		Camera.update();
+	},
 };
 
 window.addEventListener("load", () => {
@@ -130,7 +137,8 @@ window.addEventListener("load", () => {
 	});
 	
 	window.addEventListener("mousemove", (e) => {
-		if (Camera._grabbed) {
+		const mouse = Mouse.fromEvent(e);
+		if (Camera._grabbed && Position.delta(mouse, Camera._grabbed) > 10) {
 			Camera._moved = true;
 			const vec = new Vector3([e.movementX, e.movementY, 1]);
 			const applied = Matrix3.multiply(
@@ -150,8 +158,7 @@ window.addEventListener("load", () => {
 	window.addEventListener("wheel", (e) => {
 		if (DraggedElement)
 			return;
-		const hovering = Array.from(ElementContainer.children).some((element) => element["hovering"]);
-		if (hovering)
+		if (IsHoveringOverObject())
 			return;
 		const scale = Camera.scale - Math.sign(e.deltaY) / 10 * Camera.scale
 		Camera.scale = Math.clamp(scale, Camera.scaleBounds.min, Camera.scaleBounds.max);

@@ -35,14 +35,12 @@ const Rect = {
 				rect.bottom >= position.y;
 	}
 };
-
-let sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-let RotationConstant = Math.PI / 16;
-
 function GetRotate(counterClockwise = false, amount = 1) {
 	return RotationConstant * (counterClockwise ? -1 : 1) * amount;
 }
+
+let sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 
 /**
  * 
@@ -52,3 +50,8 @@ function GetRotate(counterClockwise = false, amount = 1) {
  * @returns number
  */
 Math.clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+
+
+function IsHoveringOverObject() {
+	return Array.from(ElementContainer.children).some((element) => element["hovering"]);
+}

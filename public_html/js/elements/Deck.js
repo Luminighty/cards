@@ -41,14 +41,15 @@ class Deck extends HTMLElement {
 
 	/** @param {KeyboardEvent} e */
 	keyup(e) {
-		if (e.key == "s" && this.hovering) this.shuffle();
+		if (this.shuffle && Input.Shuffle(e)) this.shuffle();
 	}
 	/** @param {KeyboardEvent} e */
 	keydown(e) {
 		if (!this.hovering) return;
 		e.preventDefault();
-		if (e.key == "r") {
-			this.rotate(GetRotate(e.ctrlKey));
+		if (Input.Rotate(e)) {
+			const counterClockwise = Input.ReverseRotate(e);
+			this.rotate(GetRotate(counterClockwise));
 		}
 	}
 
@@ -150,7 +151,7 @@ class Deck extends HTMLElement {
 
 	rotate(amount) {
 		this.rotation += amount;
-		DB.Card.transform(this.id, this.transform);
+		DB.Deck.transform(this.id, this.transform);
 	}
 }
 
@@ -178,9 +179,9 @@ img {
 /** @param {HTMLElement[]} images */
 async function ShuffleImages(...images) {
 	const randomFlip = (image, index) =>
-		index % 2
-			? image.classList.add("flip")
-			: image.classList.add("reverseFlip");
+		index % 2 ? 
+			image.classList.add("flip") : 
+			image.classList.add("reverseFlip");
 	images.forEach(randomFlip);
 	await sleep(250);
 	images.forEach((img) => img.classList.remove("flip", "reverseFlip"));

@@ -14,6 +14,9 @@ const GameObjectConnection = require("./GameObject");
 const HandConnection = require("./Hand");
 const fetch = require("node-fetch");
 
+
+const NO_LOG_EVENTS = ["mouse", "player"];
+
 /**
  * @param {Socket} socket 
  */
@@ -66,6 +69,8 @@ function Connection(socket) {
 
 	
 	socket.prependAny(async (...args) => {
+		if (NO_LOG_EVENTS.some((val) => args[0].includes(val)))
+			return;
 		Logger.log(player.id, ...args);
 	});
 

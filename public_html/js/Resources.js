@@ -7,7 +7,6 @@
  * @property {boolean} flipped
  */
 
-
 const Resource = {
 	Card: (value) => value ? `res/${value}` : "",
 	Object: (value) => value ? `res/${value}` : "",
@@ -78,5 +77,4 @@ const DB = {
 		transform: (transform, callback) =>
 			EmitPool.add("camera transform", transform.data || transform, callback),
 	}
-
-}
+};

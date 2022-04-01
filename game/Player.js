@@ -47,6 +47,7 @@ class Player {
 			discriminator: this.discriminator,
 			color: this.color,
 			camera: this.camera,
+			hasAvatar: this.discordId != "",
 		};
 	}
 

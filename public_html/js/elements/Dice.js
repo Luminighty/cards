@@ -66,7 +66,7 @@ class Dice extends HTMLElement {
 	keyup(e) {
 		if (!this.hovering)
 			return;
-		if (e.key == "r") 
+		if (Input.Roll(e)) 
 			this.roll();
 		if (this.sideKeys.includes(e.key)) {
 			const index = parseInt(e.key) - 1;

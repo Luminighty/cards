@@ -45,7 +45,7 @@ class Card extends HTMLElement {
 	keyup(e) {
 		if (!this.hovering)
 			return;
-		if (e.key == "f")
+		if (Input.Flip(e))
 			this.flip();
 	}
 
@@ -54,8 +54,9 @@ class Card extends HTMLElement {
 		if (!this.hovering)
 			return;
 		e.preventDefault();
-		if (e.key == "r") {
-			this.rotate(GetRotate(e.ctrlKey));
+		if (Input.Rotate(e)) {
+			const counterClockwise = Input.ReverseRotate(e);
+			this.rotate(GetRotate(counterClockwise));
 		}
 	}
 
@@ -120,7 +121,7 @@ class Card extends HTMLElement {
 				if (hoverDeck)
 					DB.Deck.addCard(hoverDeck.id, this.id);
 				const hoverCard = this.isOverOther(Card.Instances, Mouse.screen);
-				if (hoverCard)
+				if (hoverCard && !Hand.contains(hoverCard))
 					DB.Deck.newDeck(hoverCard.id, this.id);
 			}
 		}

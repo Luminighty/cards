@@ -19,7 +19,8 @@ class PlayerMouse extends HTMLElement {
 			this.position = data.mouse.position;
 			this.rotation = data.mouse.rotation;
 		}
-		this.span.style.backgroundImage = `url("avatar/${this.id}")`;
+		if (data.hasAvatar)
+			this.span.style.backgroundImage = `url("avatar/${this.id}")`;
 	}
 
 
@@ -35,12 +36,13 @@ class PlayerMouse extends HTMLElement {
 
 /** @type {Object<string, PlayerMouse>} */
 PlayerMouse.Instances = {};
-PlayerMouse.HTML = `<span></span>`;
+PlayerMouse.HTML = `<span class="img"></span>`;
 
 PlayerMouse.CSS = `
-span {
+.img {
 	position: absolute;
     background-repeat: round;
+	background-image: url("img/cursor.png");
     border-radius: 1000px;
     width: 32px;
     height: 32px;

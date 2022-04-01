@@ -11,6 +11,8 @@ const Dice = require("./objects/Dice");
  * @property {string[]=} filter Which fields to send
  */
 
+const NO_LOG_SYNCS = ["player"];
+
 class Game {
 	constructor() {
 		/** @type {Player[]} */
@@ -109,7 +111,8 @@ class Game {
 					Object.assign(sendData, args.extra);
 
 				player.socket.emit(type, sendData);
-				Logger.log(`sync ${type}`, sendData);
+				if (!NO_LOG_SYNCS.some((value) => type.includes(value)))
+					Logger.log(`sync ${type}`, sendData);
 			}
 		}
 	}

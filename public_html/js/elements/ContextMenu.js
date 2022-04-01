@@ -12,6 +12,7 @@ class ContextMenu extends HTMLElement {
 		this.wrapper = wrapper;
 		this.context = null;
 		this.onShowCallbacks = [];
+		this.items = [];
 
 		document.body.appendChild(this);
 		ContextMenu.Instances.push(this);
@@ -74,6 +75,32 @@ class ContextMenu extends HTMLElement {
 			item.innerText = `Id: ${context["id"] || 0}`;
 		}, ContextMenuStyles.Label({ fontSize: "10px", textAlign: "right", padding: "0px 10px", ...args }));
 	}
+	/**
+	 * 
+	 * @param {string} label 
+	 * @param {ContextSubMenuCallback<ContextType>} callback 
+	 * @param {ContextMenuItemArgs<ContextType>} args 
+	 */
+	subMenu(label, callback, args = {}) {
+		const menu = new ContextMenu();
+		callback(menu);
+		const OpenMenu = (context, item, e) => {
+			const rect = item.getBoundingClientRect();
+			const position = {
+				x: rect.right,
+				y: rect.top,
+			};
+			menu.openAt(position, context, e);
+		};
+		return this.item({
+			label,
+			onHover: OpenMenu, 
+			onClick: OpenMenu,
+			onHoverStop: () => menu.close(),
+			attributes: ["keepOpenAfterClick"],
+			...args
+		});
+	}
 
 	/**
 	 * @param {ContextMenuItemArgs<ContextType>} data
@@ -83,7 +110,8 @@ class ContextMenu extends HTMLElement {
 		const item = this.wrapper.appendChild(document.createElement("div"));
 		item.innerHTML = data.html || data.label || "";
 		item.classList.add("item");
-
+		if (data.attributes)
+		data.attributes.forEach((value) => data[value] = true);
 		ContextMenu.Args.Class.filter((val) => data[val]).forEach((val) =>
 			item.classList.add(val)
 		);
@@ -102,6 +130,16 @@ class ContextMenu extends HTMLElement {
 			item.classList.add("button");
 		}
 		if (data.onShow) this.onShowCallbacks.push([item, data.onShow]);
+		item.addEventListener("mouseenter", (e) => {
+			this.items.forEach(([other, data]) => {
+				if (data.onHoverStop && item != other)
+				data.onHoverStop(this.context, other, e);
+			});
+			if (data.onHover)
+				data.onHover(this.context, item, e);
+		});
+
+		this.items.push([item, data]);
 
 		return this;
 	}
@@ -110,13 +148,32 @@ class ContextMenu extends HTMLElement {
 		return this.wrapper.classList.contains("visible");
 	}
 
-	open(e, context) {
+
+	/**
+	 * @param {Vector2} pos
+	 * @param {ContextType} context 
+	 * @param {MouseEvent=} e
+	 */
+	openAt(pos, context, e) {
+		if (this.isOpen)
+			return;
 		for (const [item, cb] of this.onShowCallbacks) cb(context, item, e);
-		const { clientX: x, clientY: y } = e;
+		const { x, y } = pos;
 		this.wrapper.style.left = `${x}px`;
 		this.wrapper.style.top = `${y}px`;
 		this.wrapper.classList.add("visible");
 		this.context = context;
+	}
+
+	/**
+	 * @param {MouseEvent} e 
+	 * @param {ContextType} context 
+	 */
+	open(e, context) {
+		if (Camera._moved)
+			return;
+		const { clientX: x, clientY: y } = e;
+		this.openAt({x, y}, context, e);
 	}
 
 	close() {
@@ -129,7 +186,8 @@ class ContextMenu extends HTMLElement {
 }
 
 ContextMenu.Args = {};
-ContextMenu.Args.Class = ["bold", "italic", "strikethrough", "underline"];
+/** @type {ContextMenuAttribute[]} */
+ContextMenu.Args.Class = ["bold", "italic", "strikethrough", "underline", "button"];
 ContextMenu.Args.Style = ["color", "backgroundColor", "opacity", "fontSize", "padding", "textAlign"];
 
 const ContextMenuStyles = {};
@@ -153,7 +211,7 @@ ContextMenu.CSS = `
 
 .context-menu.visible {
 	transform: scale(1);
-	transition: transform 150ms ease-in-out;
+	transition: transform 75ms ease-in-out;
 }
 .item input[type="checkbox"] {
     appearance: none;
@@ -199,13 +257,13 @@ ContextMenu.Instances = [];
 
 customElements.define('context-menu', ContextMenu);
 
-window.addEventListener("load", (e) => {
-	window.addEventListener("mouseup", (e) => {
+window.addEventListener("load", () => {
+	window.addEventListener("mousedown", (e) => {
 		for (const context of ContextMenu.Instances) {
 			if (!context.isOpen)
 				continue;
 			const rect = context.getBoundingClientRect();
-			const position = Mouse.fromEvent(e);
+			const position = Mouse.screen;
 			if (!Rect.contains(rect, position))
 				context.close();
 		}

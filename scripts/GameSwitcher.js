@@ -3,7 +3,7 @@ const prompts = require('prompts');
 const request = require("request");
 require('dotenv').config();
 
-const { Games } = require("./resources/GameLoader");
+const { Games } = require("../resources/GameLoader");
 
 const initialUrl = 0;
 

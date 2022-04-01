@@ -55,9 +55,8 @@ class GameObject extends HTMLElement {
 		if (!this.hovering)
 			return;
 		e.preventDefault();
-		if (e.key == "r") {
-			this.rotate(GetRotate(e.ctrlKey));
-		}
+		if (Input.Rotate(e))
+			this.rotate(GetRotate(Input.ReverseRotate(e)));
 	}
 
 	mousemove(e) {

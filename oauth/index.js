@@ -5,6 +5,10 @@ const fetch = require("node-fetch");
 const discordAuth = express.Router();
 
 discordAuth.use(async (req, res, next) => {
+	if (req.method != "GET" || req.originalUrl != "/") {
+		next();
+		return;
+	}
 	const {code} = req.query;
 
 	if (code) {
